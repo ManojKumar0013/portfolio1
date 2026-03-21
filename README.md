@@ -9,8 +9,6 @@ Designed as a **realistic flipping book UI**, this portfolio showcases profile, 
 
 👉 https://manojkumar0013.github.io/portfolio/
 
-*(Replace with your GitHub Pages link)*
-
 ---
 
 ## 🚀 Features
