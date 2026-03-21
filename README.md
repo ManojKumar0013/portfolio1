@@ -1,30 +1,30 @@
-# 📖 Manoj Kumar — 3D Portfolio Book
+#  Manoj Kumar — 3D Portfolio Book
 
 A modern **3D interactive portfolio website** built using **HTML, CSS, and JavaScript**.
 Designed as a **realistic flipping book UI**, this portfolio showcases profile, skills, education, projects, and contact information with smooth animations and focus effects.
 
 ---
 
-## 🌐 Live Website
+##  Live Website
 
-👉 https://manojkumar0013.github.io/portfolio/
-
----
-
-## 🚀 Features
-
-* 📘 **3D Book Layout** — Realistic page flipping animation
-* 🎯 **Quick Navigation Buttons** — Jump directly to sections (About, Focus, Education, Skills)
-* 🌫 **Focus Blur Effect** — Active page stays clear, others blur
-* 🌗 **Dark / Light Mode Toggle**
-* 🎨 **Modern UI Design** with smooth transitions
-* 📱 **Responsive Layout** (works on different screen sizes)
-* 📂 **Project Showcase Section** with live preview & source links
-* 📬 **Contact Form + Social Links**
+ https://manojkumar0013.github.io/portfolio/
 
 ---
 
-## 📁 Project Structure
+## Features
+
+*  **3D Book Layout** — Realistic page flipping animation
+*  **Quick Navigation Buttons** — Jump directly to sections (About, Focus, Education, Skills)
+*  **Focus Blur Effect** — Active page stays clear, others blur
+*  **Dark / Light Mode Toggle**
+*  **Modern UI Design** with smooth transitions
+*  **Responsive Layout** (works on different screen sizes)
+*  **Project Showcase Section** with live preview & source links
+*  **Contact Form + Social Links**
+
+---
+
+##  Project Structure
 
 ```
 portfolio/
@@ -43,7 +43,7 @@ portfolio/
 
 ---
 
-## 📄 Sections Included
+##  Sections Included
 
 | Section           | Description                       |
 | ----------------- | --------------------------------- |
@@ -57,7 +57,7 @@ portfolio/
 
 ---
 
-## 🧠 Technologies Used
+##  Technologies Used
 
 * **HTML5** — Structure
 * **CSS3** — Styling, animations, 3D transforms
@@ -67,14 +67,14 @@ portfolio/
 
 ---
 
-## 🎮 Special UI Concepts
+##  Special UI Concepts
 
-### 🔄 Page Flip System
+###  Page Flip System
 
 * Each section is designed as a **book page**
 * Uses `transform: rotateY()` for realistic flipping
 
-### 🌫 Focus Blur Effect
+###  Focus Blur Effect
 
 * When navigating:
 
@@ -85,7 +85,7 @@ portfolio/
   * Arrow navigation
   * Double click
 
-### ⚡ Quick Navigation
+###  Quick Navigation
 
 Buttons:
 
@@ -98,7 +98,7 @@ Instantly jumps to correct page with proper stacking.
 
 ---
 
-## 📦 How to Run
+##  How to Run
 
 No installation needed.
 
@@ -112,14 +112,14 @@ index.html
 
 ---
 
-## 🌍 Deployment (GitHub Pages)
+##  Deployment (GitHub Pages)
 
 1. Push code to GitHub
 2. Go to **Settings → Pages**
 3. Select branch: `main`
 4. Save
 
-Your site will be live 🚀
+Your site will be live 
 
 
 
