@@ -6,7 +6,7 @@ import { PROFILE } from '../data';
 
 const API = `${import.meta.env.REACT_APP_BACKEND_URL}/api`;
 
-function ContactForm() {
+export function ContactForm() {
   const born = useRef(Date.now());
   const [f, setF] = useState({ name: '', email: '', message: '', website: '' });
   const [state, setState] = useState('idle');
@@ -67,35 +67,46 @@ function ContactForm() {
   );
 }
 
-export default function Contact() {
+export function EmailRow() {
   const [copied, setCopied] = useState(false);
-  const [phone, setPhone] = useState(false);
   const copy = async () => {
     try { await navigator.clipboard.writeText(PROFILE.email); } catch { /* clipboard blocked */ }
     setCopied(true); setTimeout(() => setCopied(false), 1800);
   };
+  return (
+    <div className="info-row">
+      <a href={`mailto:${PROFILE.email}`} className="email" data-testid="contact-email-link">{PROFILE.email}</a>
+      <button className="icon-btn" onClick={copy} aria-label="Copy email address" data-testid="contact-copy-email-btn">
+        {copied ? <Check size={16} /> : <Copy size={16} />}
+      </button>
+      <span className="mono copied" aria-live="polite">{copied ? 'copied' : ''}</span>
+    </div>
+  );
+}
 
+export function PhoneRow() {
+  const [phone, setPhone] = useState(false);
+  return (
+    <div className="info-row">
+      {phone
+        ? <a href={`tel:${PROFILE.phone.replace(/\s/g, '')}`} className="mono phone" data-testid="contact-phone-number">{PROFILE.phone}</a>
+        : <button className="btn" onClick={() => setPhone(true)} data-testid="contact-reveal-phone-btn"><Phone size={14} /> Click to reveal phone</button>}
+    </div>
+  );
+}
+
+export default function Contact() {
   return (
     <section id="contact" className="section contact" data-testid="contact-section">
       <SectionHead idx="06" path="open /dev/contact" title="Contact" id="contact" />
       <h2 className="display contact-big rv" aria-label="Let's build something">LET'S BUILD<br /><span>SOMETHING</span></h2>
       <div className="contact-grid">
         <div className="contact-info rv">
-          <div className="info-row">
-            <a href={`mailto:${PROFILE.email}`} className="email" data-testid="contact-email-link">{PROFILE.email}</a>
-            <button className="icon-btn" onClick={copy} aria-label="Copy email address" data-testid="contact-copy-email-btn">
-              {copied ? <Check size={16} /> : <Copy size={16} />}
-            </button>
-            <span className="mono copied" aria-live="polite">{copied ? 'copied' : ''}</span>
-          </div>
-          <div className="info-row">
-            {phone
-              ? <a href={`tel:${PROFILE.phone.replace(/\s/g, '')}`} className="mono phone" data-testid="contact-phone-number">{PROFILE.phone}</a>
-              : <button className="btn" onClick={() => setPhone(true)} data-testid="contact-reveal-phone-btn"><Phone size={14} /> Click to reveal phone</button>}
-          </div>
+          <EmailRow />
+          <PhoneRow />
           <div className="info-row socials">
-            <a href={PROFILE.linkedin} target="_blank" rel="noopener noreferrer" className="btn" data-testid="contact-linkedin-link"><Linkedin size={14} /> LinkedIn</a>
-            <a href={PROFILE.github} target="_blank" rel="noopener noreferrer" className="btn" data-testid="contact-github-link"><Github size={14} /> GitHub</a>
+            <a href={PROFILE.linkedin} target="_blank" rel="noopener noreferrer" className="brand-btn linkedin" data-testid="contact-linkedin-link"><Linkedin size={16} /> LinkedIn</a>
+            <a href={PROFILE.github} target="_blank" rel="noopener noreferrer" className="brand-btn github" data-testid="contact-github-link"><Github size={16} /> GitHub</a>
           </div>
         </div>
         <ContactForm />

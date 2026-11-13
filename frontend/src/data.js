@@ -34,8 +34,18 @@ export const EDUCATION = [
 ];
 
 export const SKILLS = [
-  { group: 'Web', items: ['HTML', 'CSS', 'JavaScript', 'React'] },
-  { group: 'Languages', items: ['Python', 'Java', 'C', 'C++'] },
+  { group: 'Web', items: [
+    { name: 'HTML', icon: '/icons/html5-original.svg' },
+    { name: 'CSS', icon: '/icons/css3-original.svg' },
+    { name: 'JavaScript', icon: '/icons/javascript-original.svg' },
+    { name: 'React', icon: '/icons/react-original.svg' },
+  ] },
+  { group: 'Languages', items: [
+    { name: 'Python', icon: '/icons/python-original.svg' },
+    { name: 'Java', icon: '/icons/java-original.svg' },
+    { name: 'C', icon: '/icons/c-original.svg' },
+    { name: 'C++', icon: '/icons/cplusplus-original.svg' },
+  ] },
 ];
 
 export const PROJECTS = [

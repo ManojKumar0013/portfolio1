@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Moon, Sun, Download } from 'lucide-react';
 import { usePrefs, useScramble } from '../hooks';
 import { NAV, CV_URL } from '../data';
+import { MusicButton } from './ModeSwitch';
 
 function useIST() {
   const fmt = () => new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit', hour12: false }).format(new Date());
@@ -64,6 +65,7 @@ export default function Header({ ready }) {
         <div className="header-right">
           <span className="mono clock" data-testid="header-ist-clock">IST {time}</span>
           <CvButton className="hide-sm" />
+          <MusicButton />
           <button className="icon-btn" onClick={toggleTheme} data-testid="theme-toggle-btn" aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}>
             {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
           </button>

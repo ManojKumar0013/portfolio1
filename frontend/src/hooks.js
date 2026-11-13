@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState } from 'react';
+import { startMusic, stopMusic } from './audio';
 
 const CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ#%&/<>_01';
 
@@ -17,10 +18,24 @@ export function usePrefsState() {
     root.dataset.calm = calm ? 'on' : 'off';
     localStorage.setItem('mk-calm', calm ? '1' : '0');
   }, [calm]);
+  const [music, setMusic] = useState(localStorage.getItem('mk-music') !== '0');
+  useEffect(() => {
+    localStorage.setItem('mk-music', music ? '1' : '0');
+    if (!music) { stopMusic(); return; }
+    const go = () => startMusic();
+    go();
+    window.addEventListener('pointerdown', go, { once: true });
+    window.addEventListener('keydown', go, { once: true });
+    return () => {
+      window.removeEventListener('pointerdown', go);
+      window.removeEventListener('keydown', go);
+    };
+  }, [music]);
   return {
-    theme, calm,
+    theme, calm, music,
     toggleTheme: () => setTheme((t) => (t === 'dark' ? 'light' : 'dark')),
-    toggleCalm: () => setCalm((c) => !c),
+    toggleCalm: () => { setCalm((c) => !c); window.scrollTo(0, 0); },
+    toggleMusic: () => setMusic((m) => !m),
   };
 }
 
@@ -55,9 +70,9 @@ export function useMedia(query) {
   return m;
 }
 
-export function useReveal(ready) {
+export function useReveal(active) {
   useEffect(() => {
-    if (!ready) return;
+    if (!active) return;
     const els = document.querySelectorAll('.rv:not(.in)');
     const io = new IntersectionObserver((entries) => {
       entries.forEach((e) => {
@@ -66,5 +81,5 @@ export function useReveal(ready) {
     }, { rootMargin: '0px 0px -8% 0px', threshold: 0.12 });
     els.forEach((el) => io.observe(el));
     return () => io.disconnect();
-  }, [ready]);
+  }, [active]);
 }
