@@ -14,7 +14,6 @@ export const ROLES = ['AI/ML', 'FULL STACK', 'CYBERSECURITY', 'CSE STUDENT'];
 export const NAV = [
   { id: 'about', label: 'About', path: '/proc/manoj' },
   { id: 'focus', label: 'Focus', path: '/focus' },
-  { id: 'education', label: 'Education', path: 'git log' },
   { id: 'skills', label: 'Skills', path: '/usr/bin' },
   { id: 'projects', label: 'Projects', path: '~/projects' },
   { id: 'contact', label: 'Contact', path: '/dev/contact' },

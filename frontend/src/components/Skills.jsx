@@ -47,7 +47,7 @@ export default function Skills() {
 
   return (
     <section id="skills" className="section skills" data-testid="skills-section">
-      <SectionHead idx="04" path="ls /usr/bin/skills" title="Skills" id="skills" />
+      <SectionHead idx="03" path="ls /usr/bin/skills" title="Skills" id="skills" />
       <div className="playground" data-testid="skills-playground">
         <span className="mono hint">touch & drag a skill ↘</span>
         {flat.map((s, i) => <Chip key={`${s.name}-${small}`} {...s} spot={spots[i]} />)}

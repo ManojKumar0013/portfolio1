@@ -5,13 +5,14 @@ import Header from './components/Header';
 import Hero from './components/Hero';
 import About from './components/About';
 import Focus from './components/Focus';
-import Education from './components/Education';
 import Skills from './components/Skills';
 import Projects from './components/Projects';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
 import Cursor from './components/Cursor';
+import { lazy, Suspense } from 'react';
 import StaticSite from './components/StaticSite';
+const RobotMode = lazy(() => import('./components/RobotMode'));
 import ModeSwitch from './components/ModeSwitch';
 
 function Interactive({ ready, setReady }) {
@@ -27,7 +28,6 @@ function Interactive({ ready, setReady }) {
         <Hero ready={ready} />
         <About />
         <Focus />
-        <Education />
         <Skills />
         <Projects />
         <Contact />
@@ -39,12 +39,14 @@ function Interactive({ ready, setReady }) {
 
 export default function App() {
   const prefs = usePrefsState();
-  const [ready, setReady] = useState(prefs.calm);
-  useEffect(() => { if (prefs.calm) setReady(true); }, [prefs.calm]);
+  const [ready, setReady] = useState(prefs.mode !== 'main');
+  useEffect(() => { if (prefs.mode !== 'main') setReady(true); }, [prefs.mode]);
 
   return (
     <Prefs.Provider value={prefs}>
-      {prefs.calm ? <StaticSite /> : <Interactive ready={ready} setReady={setReady} />}
+      {prefs.mode === 'static' && <StaticSite />}
+      {prefs.mode === 'robot' && <Suspense fallback={<div className="rb-loading mono">booting robot arm…</div>}><RobotMode /></Suspense>}
+      {prefs.mode === 'main' && <Interactive ready={ready} setReady={setReady} />}
       {ready && <ModeSwitch />}
     </Prefs.Provider>
   );

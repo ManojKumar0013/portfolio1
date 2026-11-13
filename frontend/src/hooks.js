@@ -9,15 +9,15 @@ export const usePrefs = () => useContext(Prefs);
 export function usePrefsState() {
   const root = document.documentElement;
   const [theme, setTheme] = useState(root.dataset.theme || 'dark');
-  const [calm, setCalm] = useState(root.dataset.calm === 'on');
+  const [mode, setModeState] = useState(root.dataset.mode || 'main');
   useEffect(() => {
     root.dataset.theme = theme;
     localStorage.setItem('mk-theme', theme);
   }, [theme]);
   useEffect(() => {
-    root.dataset.calm = calm ? 'on' : 'off';
-    localStorage.setItem('mk-calm', calm ? '1' : '0');
-  }, [calm]);
+    root.dataset.mode = mode;
+    localStorage.setItem('mk-mode', mode);
+  }, [mode]);
   const [music, setMusic] = useState(localStorage.getItem('mk-music') !== '0');
   useEffect(() => {
     localStorage.setItem('mk-music', music ? '1' : '0');
@@ -32,9 +32,9 @@ export function usePrefsState() {
     };
   }, [music]);
   return {
-    theme, calm, music,
+    theme, mode, music, calm: false,
     toggleTheme: () => setTheme((t) => (t === 'dark' ? 'light' : 'dark')),
-    toggleCalm: () => { setCalm((c) => !c); window.scrollTo(0, 0); },
+    setMode: (m) => { setModeState(m); window.scrollTo(0, 0); },
     toggleMusic: () => setMusic((m) => !m),
   };
 }

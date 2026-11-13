@@ -37,7 +37,7 @@ function SoonCard({ p, i }) {
 export default function Projects() {
   return (
     <section id="projects" className="section projects" data-testid="projects-section">
-      <SectionHead idx="05" path="ps aux ~/projects" title="Projects" id="projects" />
+      <SectionHead idx="04" path="ps aux ~/projects" title="Projects" id="projects" />
       <div className="proj-grid">
         {PROJECTS.map((p, i) => (p.status === 'live' ? <LiveCard key={p.id} p={p} i={i} /> : <SoonCard key={p.id} p={p} i={i} />))}
       </div>

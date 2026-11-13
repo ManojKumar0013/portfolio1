@@ -4,13 +4,6 @@ import { usePrefs, useScramble } from '../hooks';
 import { NAV, CV_URL } from '../data';
 import { MusicButton } from './ModeSwitch';
 
-function useIST() {
-  const fmt = () => new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit', hour12: false }).format(new Date());
-  const [t, setT] = useState(fmt);
-  useEffect(() => { const id = setInterval(() => setT(fmt()), 15000); return () => clearInterval(id); }, []);
-  return t;
-}
-
 export function CvButton({ className = '', testid = 'header-cv-btn' }) {
   if (!CV_URL) {
     return <span className={`cv-btn disabled ${className}`} data-testid={testid} aria-disabled="true" title="CV will be available soon">CV coming soon</span>;
@@ -51,7 +44,6 @@ function Menu({ open, onClose }) {
 export default function Header({ ready }) {
   const { theme, toggleTheme, calm } = usePrefs();
   const word = useScramble('MANOJ KUMAR', ready, calm);
-  const time = useIST();
   const [open, setOpen] = useState(false);
 
   useEffect(() => { document.body.style.overflow = open ? 'hidden' : ''; }, [open]);
@@ -63,7 +55,6 @@ export default function Header({ ready }) {
           {word}<span className="caret" aria-hidden="true" />
         </a>
         <div className="header-right">
-          <span className="mono clock" data-testid="header-ist-clock">IST {time}</span>
           <CvButton className="hide-sm" />
           <MusicButton />
           <button className="icon-btn" onClick={toggleTheme} data-testid="theme-toggle-btn" aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}>

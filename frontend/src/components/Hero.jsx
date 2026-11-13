@@ -72,11 +72,7 @@ export default function Hero({ ready }) {
   return (
     <section id="top" className={`hero ${ready ? 'go' : ''}`} data-testid="hero-section">
       {rich && !calm ? <DotGrid /> : <div className="dotgrid static" aria-hidden="true" />}
-      <div className="hero-meta mono">
-        <span className="chip" data-testid="hero-status-chip"><i className="pulse" /> BTech CSE '29</span>
-        <span className="hide-sm">Amrita Vishwa Vidyapeetham · Amritapuri</span>
-        <span>[ portfolio / 2026 ]</span>
-      </div>
+      <span aria-hidden="true" />
 
       <h1 className="hero-name display" aria-label="Manoj Kumar">
         <Letters word="MANOJ" />
@@ -90,9 +86,6 @@ export default function Hero({ ready }) {
       <p className="sr-only" data-testid="hero-roles">{ROLES.join(' • ')}</p>
 
       <div className="hero-bottom">
-        <p className="tagline" data-testid="hero-tagline">
-          I want to understand <em>how systems work inside</em> — and build software that is efficient and secure.
-        </p>
         <a href="#about" className="scroll-cue mono" data-testid="hero-scroll-cue">
           <ArrowDown size={14} /> scroll to boot sequence
         </a>

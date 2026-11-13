@@ -98,15 +98,15 @@ export function PhoneRow() {
 export default function Contact() {
   return (
     <section id="contact" className="section contact" data-testid="contact-section">
-      <SectionHead idx="06" path="open /dev/contact" title="Contact" id="contact" />
+      <SectionHead idx="05" path="open /dev/contact" title="Contact" id="contact" />
       <h2 className="display contact-big rv" aria-label="Let's build something">LET'S BUILD<br /><span>SOMETHING</span></h2>
       <div className="contact-grid">
         <div className="contact-info rv">
           <EmailRow />
           <PhoneRow />
           <div className="info-row socials">
-            <a href={PROFILE.linkedin} target="_blank" rel="noopener noreferrer" className="brand-btn linkedin" data-testid="contact-linkedin-link"><Linkedin size={16} /> LinkedIn</a>
-            <a href={PROFILE.github} target="_blank" rel="noopener noreferrer" className="brand-btn github" data-testid="contact-github-link"><Github size={16} /> GitHub</a>
+            <a href={PROFILE.linkedin} target="_blank" rel="noopener noreferrer" className="btn brand linkedin" data-testid="contact-linkedin-link"><Linkedin size={16} /> LinkedIn</a>
+            <a href={PROFILE.github} target="_blank" rel="noopener noreferrer" className="btn brand github" data-testid="contact-github-link"><Github size={16} /> GitHub</a>
           </div>
         </div>
         <ContactForm />
