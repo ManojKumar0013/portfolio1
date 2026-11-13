@@ -1,0 +1,52 @@
+{
+  "summary": "Tested the backend contact API (pytest, 8/8 passed; the rate limit was tested locally with a mocked email sender, so no extra real emails went out) and the frontend on desktop (1920) and mobile (390). Exactly 1 real email was sent, from the UI, and it succeeded (email_id was returned and the row was saved; I deleted my TEST_ row afterwards). Almost everything works. One HIGH bug: on desktop the decorative giant footer text '.giant' sits on top of the footer row, so the Calm-mode toggle and the Back-to-top link can't be clicked with a mouse. Calm mode itself works when triggered from JS. Loader timings run longer than the spec.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {"endpoint": "POST /api/contact", "issue": "The rate limit keys on the FIRST entry of x-forwarded-for, which the client controls. A client can spoof that header and get past the 5/hour limit. Use the last hop added by the trusted proxy, or request.client.host if the ingress overwrites it."},
+      {"endpoint": "POST /api/contact", "issue": "The _hits dict is in memory and never pruned for IPs that stop sending. Small memory growth; it resets on restart."}
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "Footer", "issue": "The '.giant' MANOJ KUMAR text (font-size 19.5vw, line-height .78) has a hit area that extends above its box. On desktop, document.elementFromPoint at the calm-mode-toggle and footer-back-to-top centers returns P.giant. Real mouse clicks do nothing: Calm mode stays off and back-to-top doesn't scroll (scrollY stayed at 7921). Mobile at 390 is fine. Fix: add pointer-events:none to .giant (it is aria-hidden decoration), or position:relative; z-index:1 on .foot-row.", "selector": "[data-testid='calm-mode-toggle'], [data-testid='footer-back-to-top']", "priority": "HIGH"},
+      {"component": "Loader", "issue": "First visit takes about 3.7-3.9s until the loader is removed (2600ms run + 180ms + 900ms split), against the <3s target. A repeat visit takes about 2.1-2.4s (1000 + 180 + 900), against ~1s. Skip takes ~0.9-1.4s because the 900ms split animation still plays.", "selector": "[data-testid='boot-loader']", "priority": "MEDIUM"}
+    ],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "Footer", "issues": ["The giant 'MANOJ KUMAR' is clipped at 1920 and at 390: the 'R' is cut off and only 'MANOJ KUMA' shows. If that isn't an intentional bleed, reduce it to about 17vw."]}
+    ]
+  },
+  "passed_items": [
+    "Loader shows a counter from 000 to 100 plus the boot log, then is removed; Skip closes it; the repeat visit is shorter (2.4s vs 3.9s)",
+    "Wordmark settles on 'MANOJ KUMAR'; the theme toggle switches html[data-theme] and the choice survives a reload; IST clock shows",
+    "Menu opens with class 'menu open'; menu-link-education goes to #education and closes the menu; Escape closes the menu and resets body overflow",
+    "Hero role strip and hero-roles read AI/ML • FULL STACK • CYBERSECURITY • CSE STUDENT; the status chip reads BTech CSE '29",
+    "Focus rows 0-3 toggle aria-expanded",
+    "Education commits 0-2 show the correct years (2025-2029, 2023-2025, 2011-2023)",
+    "Skills: the 1920 playground has 8 chips and dragging the html chip moved it about (198, 94)px; at 390 skills-grid shows the 8 skills",
+    "Projects: live, source and More-on-GitHub URLs are correct; 3 coming-soon cards; the project image loads",
+    "Contact: the copy button shows 'copied'; phone reveal shows +91 63035 92919 (tel link); LinkedIn and GitHub URLs are correct",
+    "Contact form: the browser's built-in check blocks an invalid email; a valid submit shows contact-success (1 real send)",
+    "Calm mode (triggered from JS): sets data-calm=on and localStorage mk-calm=1, survives a reload, hides the grain, removes the cursor and dot-grid canvas, and switches skills to the grid",
+    "No horizontal overflow at 390 (scrollWidth 390); header CV shows 'CV coming soon' (hidden on mobile by design; it is in the menu)"
+  ],
+  "test_report_links": ["/app/backend/tests/test_contact_api.py", "/app/test_reports/pytest/pytest_results.xml"],
+  "action_items": [
+    "HIGH: add pointer-events:none to .giant in the footer (or raise .foot-row above it) so calm-mode-toggle and footer-back-to-top can be clicked on desktop",
+    "Shorten the loader timings to meet the <3s first-visit and ~1s repeat targets (shorter run time and split; on Skip, remove faster)",
+    "Rate limit: don't trust the client-supplied first x-forwarded-for value",
+    "Optional: stop the giant footer name from being clipped"
+  ],
+  "critical_code_review_comments": [
+    "server.py: the IP is taken from x-forwarded-for.split(',')[0], which can be spoofed",
+    "hooks.js: usePrefsState writes mk-calm on the first render, so after the first visit an OS-level change to prefers-reduced-motion is ignored. Acceptable, but worth noting",
+    "Loader: finish() is defined inside the component but called from an effect with an empty dependency list; it works only because of the finished ref"
+  ],
+  "updated_files": ["/app/backend/tests/test_contact_api.py"],
+  "success_rate": {"backend": "100%", "frontend": "90%"},
+  "seed_data_creation": "One real contact message (TEST_ Tester) was sent; its db.messages row was deleted by its exact fields. The owner's inbox received 1 test email.",
+  "retest_needed": true,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Use REACT_APP_BACKEND_URL (mj-portfolio-v2...). test_contact_api.py has a mocked rate-limit test (TestClient, send_email patched), so the 429 path can be checked without real emails. Re-test real mouse clicks on calm-mode-toggle and footer-back-to-top at 1920x1080 after the .giant fix."
+}

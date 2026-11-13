@@ -39,6 +39,8 @@ class ContactIn(BaseModel):
 
 def _rate_limited(ip: str) -> bool:
     now = time.time()
+    if len(_hits) > 5000:
+        _hits.clear()
     hits = [t for t in _hits.get(ip, []) if now - t < RATE_WINDOW]
     _hits[ip] = hits
     if len(hits) >= RATE_MAX:
@@ -69,7 +71,7 @@ async def root():
 async def contact(body: ContactIn, request: Request):
     if body.website or body.elapsed_ms < 2500:
         return {"status": "sent"}
-    ip = request.headers.get("x-forwarded-for", request.client.host if request.client else "?").split(",")[0].strip()
+    ip = request.headers.get("x-forwarded-for", request.client.host if request.client else "?").split(",")[-1].strip()
     if _rate_limited(ip):
         raise HTTPException(status_code=429, detail="Too many messages. Try again later.")
     subject = f"Portfolio message from {body.name.strip()[:60]}"

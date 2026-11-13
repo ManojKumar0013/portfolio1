@@ -13,7 +13,7 @@ const LOGS = [
 export default function Loader({ onDone }) {
   const { calm } = usePrefs();
   const repeat = useRef(localStorage.getItem('mk-booted') === '1').current;
-  const duration = calm ? 700 : repeat ? 1000 : 2600;
+  const duration = calm ? 600 : repeat ? 400 : 2000;
   const [n, setN] = useState(0);
   const [phase, setPhase] = useState('run');
   const finished = useRef(false);
@@ -24,7 +24,7 @@ export default function Loader({ onDone }) {
     localStorage.setItem('mk-booted', '1');
     setN(100);
     setPhase('open');
-    setTimeout(onDone, calm ? 250 : 900);
+    setTimeout(onDone, calm ? 250 : 600);
   };
 
   useEffect(() => {
@@ -36,7 +36,7 @@ export default function Loader({ onDone }) {
       const eased = 1 - Math.pow(1 - p, 2.2);
       setN(Math.round(eased * 100));
       if (p < 1) raf = requestAnimationFrame(tick);
-      else setTimeout(finish, 180);
+      else setTimeout(finish, 100);
     };
     raf = requestAnimationFrame(tick);
     const onKey = (e) => { if (e.key === 'Escape') finish(); };

@@ -53,7 +53,7 @@ html.has-cursor, html.has-cursor * { cursor: none !important; }
 
 /* loader */
 .loader { position: fixed; inset: 0; z-index: 250; color: var(--fg); }
-.loader-panel { position: absolute; left: 0; right: 0; height: 50.5%; background: var(--bg); transition: transform .85s var(--ease); }
+.loader-panel { position: absolute; left: 0; right: 0; height: 50.5%; background: var(--bg); transition: transform .6s var(--ease); }
 .loader-panel.top { top: 0; border-bottom: 1px solid var(--line); }
 .loader-panel.bottom { bottom: 0; }
 .loader.open .loader-panel.top { transform: translateY(-100%); }
@@ -276,14 +276,14 @@ html.has-cursor, html.has-cursor * { cursor: none !important; }
 
 /* footer */
 .site-footer { border-top: 1px solid var(--line); padding: 2rem var(--pad) 0; overflow: hidden; }
-.foot-row { display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; color: var(--muted); }
+.foot-row { position: relative; z-index: 1; display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; color: var(--muted); }
 .foot-row .btn { color: var(--fg); }
 .calm-toggle { display: inline-flex; align-items: center; gap: .6rem; font-family: var(--mono); font-size: .7rem; text-transform: uppercase; color: var(--fg); }
 .sw { width: 38px; height: 22px; border-radius: 99px; border: 1px solid var(--line); position: relative; transition: background-color .3s; }
 .sw i { position: absolute; top: 3px; left: 3px; width: 14px; height: 14px; border-radius: 50%; background: var(--fg); transition: transform .3s var(--ease-out); }
 .calm-toggle.on .sw { background: var(--accent); border-color: var(--accent); }
 .calm-toggle.on .sw i { transform: translateX(16px); background: var(--on-accent); }
-.giant { font-size: 19.5vw; line-height: .78; white-space: nowrap; margin-top: 2rem; text-align: center; color: var(--fg); transform: translateY(8%); letter-spacing: -.02em; }
+.giant { pointer-events: none; user-select: none; font-size: 16.5vw; line-height: .78; white-space: nowrap; margin-top: 2rem; text-align: center; color: var(--fg); transform: translateY(8%); letter-spacing: -.02em; }
 
 /* calm mode */
 [data-calm='on'] .grain { display: none; }
