@@ -1,15 +1,16 @@
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { X, Maximize2, Box } from 'lucide-react';
+import { X, Maximize2, Box, Sun, Moon } from 'lucide-react';
+import { usePrefs } from '../hooks';
 import { createRobotScene, ROBOT_LABELS } from '../robot/scene';
 import { MusicButton } from './ModeSwitch';
-import { StAbout, StFocus, StSkills, StProjects, StContact } from './StaticSite';
+import { RcAbout, RcSkills, RcProjects, RcContact } from './RobotContent';
 
 const CONTENT = {
-  about: { title: 'About Me', body: () => (<><StAbout /><h3 className="rb-sub display">Interests & Focus</h3><StFocus /></>) },
-  skills: { title: 'Skills', body: StSkills },
-  projects: { title: 'Projects', body: StProjects },
-  contact: { title: 'Contact', body: () => <StContact prefix="robot" /> },
+  about: { title: 'About Me', body: RcAbout },
+  skills: { title: 'Skills', body: RcSkills },
+  projects: { title: 'Projects', body: RcProjects },
+  contact: { title: 'Contact', body: RcContact },
 };
 
 function RobotWindow({ id, flat, onFlat, onClose }) {
@@ -44,10 +45,12 @@ export default function RobotMode() {
   const [hover, setHover] = useState(null);
   const [flat, setFlat] = useState(false);
   const [panel, setPanel] = useState(null);
+  const { theme, toggleTheme } = usePrefs();
+  useEffect(() => { api.current?.setTheme(theme); }, [theme, panel]);
 
   useEffect(() => {
     api.current = createRobotScene(host.current, {
-      onStart: (id) => { setHover(null); setBusy(id); },
+      onStart: (id) => { setHover(null); setOpen(null); setFlat(false); setBusy(id); },
       onPick: (id) => { setBusy(null); setOpen(id); },
       onHover: setHover,
     });
@@ -67,12 +70,17 @@ export default function RobotMode() {
       <div className="robot-stage" ref={host} data-testid="robot-canvas" />
       <header className="rb-top">
         <span className="display rb-name">MANOJ KUMAR<span className="caret" aria-hidden="true" /></span>
-        <MusicButton testid="robot-music-toggle-btn" />
+        <div className="rb-tools">
+          <MusicButton testid="robot-music-toggle-btn" />
+          <button className="icon-btn" onClick={toggleTheme} data-testid="robot-theme-toggle-btn" aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} background`}>
+            {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
+          </button>
+        </div>
       </header>
-      <nav className="rb-options" aria-label="Sections">
+      <nav className="rb-options sr-only" aria-label="Sections">
         <span className="mono">sections</span>
         {ROBOT_LABELS.map((l) => (
-          <button key={l.id} className="mono" style={{ '--c': l.color }} disabled={!!busy || !!open}
+          <button key={l.id} className="mono" style={{ '--c': l.color }} disabled={!!busy} aria-current={open === l.id}
             onClick={() => api.current?.pick(l.id)} data-testid={`robot-option-${l.id}`}>
             <i aria-hidden="true" />{l.text}
           </button>

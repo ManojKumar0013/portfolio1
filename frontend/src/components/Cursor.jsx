@@ -15,7 +15,7 @@ export default function Cursor() {
     const move = (e) => {
       x = e.clientX; y = e.clientY;
       dot.current.style.transform = `translate(${x}px, ${y}px)`;
-      const hot = e.target.closest?.('a, button, .chip-drag, input, textarea, label');
+      const hot = e.target.closest?.('a, button, input, textarea, label');
       ring.current.classList.toggle('hot', !!hot);
     };
     const loop = () => {

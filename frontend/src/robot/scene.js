@@ -6,13 +6,20 @@ import fontJson from 'three/examples/fonts/helvetiker_bold.typeface.json';
 import { CSS3DRenderer, CSS3DObject } from 'three/examples/jsm/renderers/CSS3DRenderer.js';
 
 export const ROBOT_LABELS = [
-  { id: 'about', text: 'ABOUT ME', color: '#4de8ff', pos: [-1.9, 2.7] },
-  { id: 'skills', text: 'SKILLS', color: '#ff5ec8', pos: [1.9, 2.7] },
-  { id: 'projects', text: 'PROJECTS', color: '#ffe14d', pos: [-1.9, 4.4] },
-  { id: 'contact', text: 'CONTACT', color: '#ff7a3d', pos: [1.9, 4.4] },
+  { id: 'about', text: 'ABOUT ME', color: '#4de8ff', light: '#0891b2', pos: [-1.9, 2.7] },
+  { id: 'skills', text: 'SKILLS', color: '#ff5ec8', light: '#c0268a', pos: [1.9, 2.7] },
+  { id: 'projects', text: 'PROJECTS', color: '#ffe14d', light: '#b88900', pos: [-1.9, 4.4] },
+  { id: 'contact', text: 'CONTACT', color: '#ff7a3d', light: '#d9480f', pos: [1.9, 4.4] },
 ];
 
+const THEMES = {
+  dark: { bg: '#1d1d1b', floor: '#232321', grid1: '#77756d', grid2: '#45443f', hemi: 1.1 },
+  light: { bg: '#e9e5da', floor: '#e4dfd2', grid1: '#8f8b80', grid2: '#c9c4b6', hemi: 1.6 },
+};
+
 const L1 = 2.8, L2 = 2.5, GRIP = 0.9, SHOULDER_Y = 1.0;
+const FRONT_YAW = Math.atan2(6.5, 9) - 0.6;
+const FRONT_YAW_NARROW = Math.atan2(0.3, 17.5) - 0.35;
 const IDLE = { yaw: 0, sh: -0.25, el: -0.95, wr: -0.6, grip: 0.24 };
 
 function solveIK(x, z, y) {
@@ -117,8 +124,6 @@ export function createRobotScene(host, { onStart, onPick, onHover }) {
   controls.minDistance = 7;
   controls.maxDistance = 26;
   controls.maxPolarAngle = Math.PI / 2.15;
-  controls.minAzimuthAngle = -0.7;
-  controls.maxAzimuthAngle = 1.3;
   controls.target.set(0, 1.4, 2);
 
   scene.add(new THREE.HemisphereLight('#ffffff', '#3a3a36', 1.1));
@@ -133,9 +138,25 @@ export function createRobotScene(host, { onStart, onPick, onHover }) {
   floor.rotation.x = -Math.PI / 2;
   floor.receiveShadow = true;
   scene.add(floor);
-  const grid = new THREE.GridHelper(14, 28, '#77756d', '#45443f');
-  grid.position.set(0, 0.005, 1.5);
-  scene.add(grid);
+  let grid = null;
+  const hemi = scene.children.find((o) => o.isHemisphereLight);
+  const setTheme = (name) => {
+    const t = THEMES[name] || THEMES.dark;
+    scene.background.set(t.bg);
+    scene.fog.color.set(t.bg);
+    floor.material.color.set(t.floor);
+    hemi.intensity = t.hemi;
+    if (grid) { scene.remove(grid); grid.geometry.dispose(); grid.material.dispose(); }
+    grid = new THREE.GridHelper(14, 28, t.grid1, t.grid2);
+    grid.position.set(0, 0.005, 1.5);
+    scene.add(grid);
+    labels?.forEach((l) => {
+      const c = name === 'light' ? l.light : l.color;
+      l.mat.color.set(c); l.mat.emissive.set(c);
+    });
+  };
+  let labels = null;
+  setTheme('dark');
 
   const mats = {
     white: new THREE.MeshStandardMaterial({ color: '#ecebe6', roughness: 0.32, metalness: 0.25 }),
@@ -145,7 +166,7 @@ export function createRobotScene(host, { onStart, onPick, onHover }) {
   };
   const arm = buildArm(mats);
   scene.add(arm.root);
-  const labels = buildLabels(scene);
+  labels = buildLabels(scene);
   const hits = labels.map((l) => l.hit);
 
   const panelEl = document.createElement('div');
@@ -165,8 +186,7 @@ export function createRobotScene(host, { onStart, onPick, onHover }) {
     pv.scale = narrow ? 0.0098 : 0.0088;
     pv.from.set(l.pos[0], 0.4, l.pos[1]);
     pv.to.set(narrow ? 0 : 0.2, narrow ? 4.2 : 2.9, narrow ? 2.6 : 2.2);
-    const az = Math.atan2(camera.position.x - controls.target.x, camera.position.z - controls.target.z);
-    pv.yaw = az - (narrow ? 0.35 : 0.6);
+    pv.yaw = narrow ? FRONT_YAW_NARROW : FRONT_YAW;
     pv.target = 1;
     panel.visible = true;
   };
@@ -186,9 +206,10 @@ export function createRobotScene(host, { onStart, onPick, onHover }) {
   };
 
   const pick = (id) => {
-    if (busy || picked) return;
+    if (busy) return;
     const l = labels.find((x) => x.id === id);
-    if (!l) return;
+    if (!l || picked === l) return;
+    if (picked) release();
     busy = true;
     hovered = null;
     onStart?.(id);
@@ -287,6 +308,7 @@ export function createRobotScene(host, { onStart, onPick, onHover }) {
     release,
     showPanel,
     hidePanel,
+    setTheme,
     panel: panelEl,
     dispose() {
       timers.forEach(clearTimeout);
