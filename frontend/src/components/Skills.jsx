@@ -1,57 +1,80 @@
 import { useRef } from 'react';
 import SectionHead from './SectionHead';
 import { SKILLS } from '../data';
-import { useMedia } from '../hooks';
-
-const SPOTS = [[6, 14], [26, 52], [44, 10], [62, 48], [12, 66], [38, 74], [70, 16], [82, 64]];
-const SPOTS_SM = [[4, 4], [52, 8], [8, 26], [50, 32], [4, 52], [56, 56], [10, 78], [52, 80]];
 
 const slug = (n) => n.toLowerCase().replace(/\+/g, 'p');
 
-function Chip({ name, icon, group, spot }) {
-  const ref = useRef(null);
-  const st = useRef({ x: 0, y: 0, sx: 0, sy: 0 });
+function Chip({ name, icon, group }) {
+  const drag = useRef({ x: 0, y: 0, pointerId: null });
+
+  const updateBounds = (chip) => {
+    const area = chip.closest('.playground').getBoundingClientRect();
+    const rect = chip.getBoundingClientRect();
+    const state = drag.current;
+    state.minX = state.x + area.left + 8 - rect.left;
+    state.maxX = state.x + area.right - 8 - rect.right;
+    state.minY = state.y + area.top + 8 - rect.top;
+    state.maxY = state.y + area.bottom - 8 - rect.bottom;
+  };
+
+  const position = (chip, x, y) => {
+    const state = drag.current;
+    state.x = Math.min(Math.max(x, state.minX), state.maxX);
+    state.y = Math.min(Math.max(y, state.minY), state.maxY);
+    chip.style.transform = `translate(${state.x}px, ${state.y}px)`;
+  };
+
   const down = (e) => {
-    const s = st.current;
-    s.sx = e.clientX - s.x; s.sy = e.clientY - s.y;
-    const el = ref.current;
-    el.classList.add('drag');
-    const box = el.parentElement.getBoundingClientRect(), r = el.getBoundingClientRect();
-    s.minX = s.x - (r.left - box.left) + 8; s.maxX = s.x + (box.right - r.right) - 8;
-    s.minY = s.y - (r.top - box.top) + 8; s.maxY = s.y + (box.bottom - r.bottom) - 8;
-    try { el.setPointerCapture(e.pointerId); } catch { /* synthetic event */ }
+    const state = drag.current;
+    if (e.button !== 0 || state.pointerId !== null) return;
+    const chip = e.currentTarget;
+    state.pointerId = e.pointerId;
+    chip.setPointerCapture(e.pointerId);
+    chip.classList.add('drag');
+    updateBounds(chip);
+    position(chip, state.x, state.y);
+    state.startX = e.clientX - state.x;
+    state.startY = e.clientY - state.y;
   };
+
   const move = (e) => {
-    if (!ref.current.classList.contains('drag')) return;
-    const s = st.current;
-    const clamp = (v, a, b) => Math.min(Math.max(v, a), b);
-    s.x = clamp(e.clientX - s.sx, s.minX, s.maxX); s.y = clamp(e.clientY - s.sy, s.minY, s.maxY);
-    ref.current.style.transform = `translate(${s.x}px, ${s.y}px) rotate(${s.x * 0.02}deg)`;
+    const state = drag.current;
+    if (e.pointerId !== state.pointerId) return;
+    position(e.currentTarget, e.clientX - state.startX, e.clientY - state.startY);
   };
-  const up = () => ref.current.classList.remove('drag');
+
+  const up = (e) => {
+    const state = drag.current;
+    if (e.pointerId !== state.pointerId) return;
+    state.pointerId = null;
+    const chip = e.currentTarget;
+    chip.classList.remove('drag');
+    updateBounds(chip);
+    position(chip, state.x, state.y);
+  };
+
   return (
-    <div ref={ref} className="chip-drag" style={{ left: `${spot[0]}%`, top: `${spot[1]}%` }}
-      onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerCancel={up}
+    <li className="chip-drag" onPointerDown={down} onPointerMove={move}
+      onPointerUp={up} onPointerCancel={up} onLostPointerCapture={up}
       data-testid={`skill-chip-${slug(name)}`}>
-      <img className="logo" src={icon} alt="" width="56" height="56" draggable="false" />
+      <img className="logo" src={icon} alt="" width="56" height="56" draggable="false" loading="lazy" />
       <span className="mono g">{group}</span>
       <span className="nm">{name}</span>
-    </div>
+    </li>
   );
 }
 
 export default function Skills() {
-  const small = useMedia('(max-width: 640px)');
-  const flat = SKILLS.flatMap((s) => s.items.map((it) => ({ ...it, group: s.group })));
-  const spots = small ? SPOTS_SM : SPOTS;
+  const flat = SKILLS.flatMap(({ group, items }) => items.map((skill) => ({ ...skill, group })));
 
   return (
     <section id="skills" className="section skills" data-testid="skills-section">
       <SectionHead idx="03" path="ls /usr/bin/skills" title="Skills" id="skills" />
       <div className="playground" data-testid="skills-playground">
-        <span className="mono hint">touch & drag a skill ↘</span>
-        {flat.map((s, i) => <Chip key={`${s.name}-${small}`} {...s} spot={spots[i]} />)}
-        <ul className="sr-only">{flat.map((s) => <li key={s.name}>{s.group}: {s.name}</li>)}</ul>
+        <ul className="skill-chips">
+          {flat.map((skill) => <Chip key={skill.name} {...skill} />)}
+        </ul>
+        <span className="mono hint">Drag a skill ↘</span>
       </div>
     </section>
   );

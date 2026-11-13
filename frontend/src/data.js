@@ -32,6 +32,22 @@ export const SKILLS = [
     { name: 'CSS', icon: '/icons/css3-original.svg' },
     { name: 'JavaScript', icon: '/icons/javascript-original.svg' },
     { name: 'React', icon: '/icons/react-original.svg' },
+    { name: 'Next.js', icon: '/icons/nextjs-original.svg' },
+    { name: 'Tailwind CSS', icon: '/icons/tailwindcss-original.svg' },
+  ] },
+  { group: 'Backend', items: [
+    { name: 'Express', icon: '/icons/express-original.svg' },
+    { name: 'Flask', icon: '/icons/flask-original.svg' },
+  ] },
+  { group: 'Databases', items: [
+    { name: 'SQL', icon: '/icons/sql.svg' },
+    { name: 'PostgreSQL', icon: '/icons/postgresql-original.svg' },
+    { name: 'MongoDB', icon: '/icons/mongodb-original.svg' },
+    { name: 'Supabase', icon: '/icons/supabase-original.svg' },
+  ] },
+  { group: 'Tools', items: [
+    { name: 'Git', icon: '/icons/git-original.svg' },
+    { name: 'VS Code', icon: '/icons/vscode-original.svg' },
   ] },
   { group: 'Languages', items: [
     { name: 'Python', icon: '/icons/python-original.svg' },
