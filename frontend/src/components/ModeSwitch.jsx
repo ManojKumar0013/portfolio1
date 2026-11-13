@@ -11,22 +11,14 @@ export function MusicButton({ testid = 'music-toggle-btn' }) {
   );
 }
 
-const MODES = [
-  { id: 'main', label: 'Main' },
-  { id: 'robot', label: 'Robot arm' },
-  { id: 'static', label: 'Static' },
-];
-
 export default function ModeSwitch() {
   const { mode, setMode } = usePrefs();
+  const next = mode === 'robot' ? 'main' : 'robot';
   return (
-    <div className="mode-switch mono" role="group" aria-label="View mode" data-testid="mode-switch">
-      {MODES.map((m) => (
-        <button key={m.id} className={mode === m.id ? 'on' : ''} aria-pressed={mode === m.id}
-          onClick={() => setMode(m.id)} data-testid={`mode-${m.id}-btn`}>
-          {m.label}
-        </button>
-      ))}
+    <div className="mode-switch" data-testid="mode-switch">
+      <button className="mode-main mono" onClick={() => setMode(next)} data-testid="mode-toggle-btn">
+        {next === 'robot' ? 'Switch to Robot Arm Mode' : 'Switch to Main Mode'}
+      </button>
     </div>
   );
 }

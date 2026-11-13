@@ -9,15 +9,12 @@ export const usePrefs = () => useContext(Prefs);
 export function usePrefsState() {
   const root = document.documentElement;
   const [theme, setTheme] = useState(root.dataset.theme || 'dark');
-  const [mode, setModeState] = useState(root.dataset.mode || 'main');
+  const [mode, setModeState] = useState(root.dataset.mode || 'robot');
   useEffect(() => {
     root.dataset.theme = theme;
     localStorage.setItem('mk-theme', theme);
   }, [theme]);
-  useEffect(() => {
-    root.dataset.mode = mode;
-    localStorage.setItem('mk-mode', mode);
-  }, [mode]);
+  useEffect(() => { root.dataset.mode = mode; }, [mode]);
   const [music, setMusic] = useState(localStorage.getItem('mk-music') !== '0');
   useEffect(() => {
     localStorage.setItem('mk-music', music ? '1' : '0');

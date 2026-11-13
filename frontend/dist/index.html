@@ -15,15 +15,14 @@
         try {
           var d = document.documentElement;
           var t = localStorage.getItem('mk-theme') || (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
-          var m = localStorage.getItem('mk-mode');
-          if (!m) m = matchMedia('(prefers-reduced-motion: reduce)').matches ? 'static' : 'main';
+          var m = matchMedia('(prefers-reduced-motion: reduce)').matches ? 'static' : 'robot';
           d.dataset.theme = t;
           d.dataset.mode = m;
         } catch (e) {}
       })();
     </script>
-    <script type="module" crossorigin src="/assets/index-BtU0UW7g.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/style-DyhgDWgQ.css">
+    <script type="module" crossorigin src="/assets/index-ChaW_t7A.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/style-DA6M0kqt.css">
   </head>
   <body>
     <div id="root"></div>

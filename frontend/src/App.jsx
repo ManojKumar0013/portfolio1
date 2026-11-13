@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useState } from 'react';
+import { lazy, Suspense, useState } from 'react';
 import { Prefs, usePrefsState, useReveal } from './hooks';
 import Loader from './components/Loader';
 import Header from './components/Header';
@@ -15,12 +15,11 @@ import ModeSwitch from './components/ModeSwitch';
 
 const RobotMode = lazy(() => import('./components/RobotMode'));
 
-function Interactive({ ready, setReady }) {
+function Interactive({ ready }) {
   useReveal(ready);
   return (
     <>
       <a href="#main" className="skip-link">Skip to content</a>
-      {!ready && <Loader onDone={() => setReady(true)} />}
       <div className="grain" aria-hidden="true" />
       <Cursor />
       <Header ready={ready} />
@@ -39,14 +38,14 @@ function Interactive({ ready, setReady }) {
 
 export default function App() {
   const prefs = usePrefsState();
-  const [ready, setReady] = useState(prefs.mode !== 'main');
-  useEffect(() => { if (prefs.mode !== 'main') setReady(true); }, [prefs.mode]);
+  const [ready, setReady] = useState(prefs.mode === 'static');
 
   return (
     <Prefs.Provider value={prefs}>
       {prefs.mode === 'static' && <StaticSite />}
       {prefs.mode === 'robot' && <Suspense fallback={<div className="rb-loading mono">booting robot arm…</div>}><RobotMode /></Suspense>}
-      {prefs.mode === 'main' && <Interactive ready={ready} setReady={setReady} />}
+      {prefs.mode === 'main' && <Interactive ready={ready} />}
+      {!ready && <Loader onDone={() => setReady(true)} />}
       {ready && <ModeSwitch />}
     </Prefs.Provider>
   );

@@ -25,7 +25,11 @@ export default function Cursor() {
     };
     addEventListener('pointermove', move, { passive: true });
     raf = requestAnimationFrame(loop);
-    return () => { removeEventListener('pointermove', move); cancelAnimationFrame(raf); };
+    return () => {
+      removeEventListener('pointermove', move);
+      cancelAnimationFrame(raf);
+      document.documentElement.classList.remove('has-cursor');
+    };
   }, [on]);
 
   if (!on) return null;

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import { X, Maximize2, Minimize2 } from 'lucide-react';
+import { createPortal } from 'react-dom';
+import { X, Maximize2, Box } from 'lucide-react';
 import { createRobotScene, ROBOT_LABELS } from '../robot/scene';
 import { MusicButton } from './ModeSwitch';
 import { StAbout, StFocus, StSkills, StProjects, StContact } from './StaticSite';
@@ -11,8 +12,7 @@ const CONTENT = {
   contact: { title: 'Contact', body: () => <StContact prefix="robot" /> },
 };
 
-function RobotWindow({ id, onClose }) {
-  const [max, setMax] = useState(false);
+function RobotWindow({ id, flat, onFlat, onClose }) {
   const { title, body: Body } = CONTENT[id];
   useEffect(() => {
     const onKey = (e) => e.key === 'Escape' && onClose();
@@ -20,20 +20,18 @@ function RobotWindow({ id, onClose }) {
     return () => window.removeEventListener('keydown', onKey);
   }, [onClose]);
   return (
-    <div className="rb-window-wrap" data-testid="robot-window">
-      <div className={`rb-window ${max ? 'max' : ''}`} role="dialog" aria-label={title}>
-        <div className="rb-titlebar">
-          <span className="mono">~/{id}</span>
-          <strong>{title}</strong>
-          <div className="rb-ctrls">
-            <button className="rb-max" onClick={() => setMax((m) => !m)} aria-label={max ? 'Restore window' : 'Maximize window'} data-testid="robot-window-max-btn">
-              {max ? <Minimize2 size={13} /> : <Maximize2 size={13} />}
-            </button>
-            <button className="rb-close" onClick={onClose} aria-label="Close window" data-testid="robot-window-close-btn"><X size={14} /></button>
-          </div>
+    <div className={`rb-window ${flat ? 'flat' : 'in3d'}`} role="dialog" aria-label={title} data-testid="robot-window">
+      <div className="rb-titlebar">
+        <span className="mono">~/{id}</span>
+        <strong>{title}</strong>
+        <div className="rb-ctrls">
+          <button className="rb-max" onClick={onFlat} aria-label={flat ? 'Back to 3D view' : 'Flat reading view'} title={flat ? '3D view' : 'Flat view'} data-testid="robot-window-max-btn">
+            {flat ? <Box size={13} /> : <Maximize2 size={13} />}
+          </button>
+          <button className="rb-close" onClick={onClose} aria-label="Close window" data-testid="robot-window-close-btn"><X size={14} /></button>
         </div>
-        <div className="rb-body" data-testid={`robot-window-${id}`}><Body /></div>
       </div>
+      <div className="rb-body" data-testid={`robot-window-${id}`}><Body /></div>
     </div>
   );
 }
@@ -44,6 +42,8 @@ export default function RobotMode() {
   const [open, setOpen] = useState(null);
   const [busy, setBusy] = useState(null);
   const [hover, setHover] = useState(null);
+  const [flat, setFlat] = useState(false);
+  const [panel, setPanel] = useState(null);
 
   useEffect(() => {
     api.current = createRobotScene(host.current, {
@@ -51,10 +51,15 @@ export default function RobotMode() {
       onPick: (id) => { setBusy(null); setOpen(id); },
       onHover: setHover,
     });
+    setPanel(api.current.panel);
     return () => api.current.dispose();
   }, []);
 
-  const close = () => { setOpen(null); api.current?.release(); };
+  const close = () => { setOpen(null); setFlat(false); api.current?.release(); };
+  const toggleFlat = () => {
+    if (flat) api.current?.showPanel(open); else api.current?.hidePanel();
+    setFlat(!flat);
+  };
   const status = open ? `viewing ${open}` : busy ? `fetching ${busy}…` : hover ? `click to fetch ${hover}` : 'click a word on the floor — the arm will fetch it';
 
   return (
@@ -74,7 +79,8 @@ export default function RobotMode() {
         ))}
       </nav>
       <p className="rb-status mono" aria-live="polite" data-testid="robot-status">{status}</p>
-      {open && <RobotWindow id={open} onClose={close} />}
+      {open && flat && <div className="rb-window-wrap"><RobotWindow id={open} flat onFlat={toggleFlat} onClose={close} /></div>}
+      {open && !flat && panel && createPortal(<RobotWindow id={open} flat={false} onFlat={toggleFlat} onClose={close} />, panel)}
     </div>
   );
 }

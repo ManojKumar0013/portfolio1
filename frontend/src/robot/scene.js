@@ -3,6 +3,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js';
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js';
 import fontJson from 'three/examples/fonts/helvetiker_bold.typeface.json';
+import { CSS3DRenderer, CSS3DObject } from 'three/examples/jsm/renderers/CSS3DRenderer.js';
 
 export const ROBOT_LABELS = [
   { id: 'about', text: 'ABOUT ME', color: '#4de8ff', pos: [-1.9, 2.7] },
@@ -101,6 +102,9 @@ export function createRobotScene(host, { onStart, onPick, onHover }) {
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   host.appendChild(renderer.domElement);
+  const css = new CSS3DRenderer();
+  css.domElement.className = 'rb-css3d';
+  host.appendChild(css.domElement);
 
   const scene = new THREE.Scene();
   scene.background = new THREE.Color('#1d1d1b');
@@ -113,6 +117,8 @@ export function createRobotScene(host, { onStart, onPick, onHover }) {
   controls.minDistance = 7;
   controls.maxDistance = 26;
   controls.maxPolarAngle = Math.PI / 2.15;
+  controls.minAzimuthAngle = -0.7;
+  controls.maxAzimuthAngle = 1.3;
   controls.target.set(0, 1.4, 2);
 
   scene.add(new THREE.HemisphereLight('#ffffff', '#3a3a36', 1.1));
@@ -142,6 +148,30 @@ export function createRobotScene(host, { onStart, onPick, onHover }) {
   const labels = buildLabels(scene);
   const hits = labels.map((l) => l.hit);
 
+  const panelEl = document.createElement('div');
+  panelEl.className = 'rb-panel';
+  panelEl.dataset.testid = 'robot-3d-panel';
+  const panel = new CSS3DObject(panelEl);
+  panel.rotation.order = 'YXZ';
+  panel.visible = false;
+  scene.add(panel);
+  const pv = { t: 0, target: 0, from: new THREE.Vector3(), to: new THREE.Vector3(), yaw: 0, scale: 0.0085 };
+
+  const showPanel = (id) => {
+    const l = labels.find((x) => x.id === id);
+    const narrow = host.clientWidth / Math.max(1, host.clientHeight) < 0.8;
+    panelEl.style.width = narrow ? '560px' : '900px';
+    panelEl.style.height = narrow ? '860px' : '620px';
+    pv.scale = narrow ? 0.0098 : 0.0088;
+    pv.from.set(l.pos[0], 0.4, l.pos[1]);
+    pv.to.set(narrow ? 0 : 0.2, narrow ? 4.2 : 2.9, narrow ? 2.6 : 2.2);
+    const az = Math.atan2(camera.position.x - controls.target.x, camera.position.z - controls.target.z);
+    pv.yaw = az - (narrow ? 0.35 : 0.6);
+    pv.target = 1;
+    panel.visible = true;
+  };
+  const hidePanel = () => { pv.target = 0; };
+
   const pose = { ...IDLE };
   let target = { ...IDLE };
   let busy = false, picked = null, hovered = null, timers = [];
@@ -167,10 +197,11 @@ export function createRobotScene(host, { onStart, onPick, onHover }) {
     timers.push(setTimeout(() => { target = { ...solveIK(p.x, p.z, p.y + GRIP + 0.05), grip: 0.26 }; }, 900));
     timers.push(setTimeout(() => { target.grip = 0.1; }, 1350));
     timers.push(setTimeout(() => { l.liftTarget = 1; target = { ...solveIK(p.x, p.z, p.y + GRIP + 0.9), grip: 0.1 }; }, 1600));
-    timers.push(setTimeout(() => { picked = l; busy = false; onPick?.(id); }, 2150));
+    timers.push(setTimeout(() => { picked = l; busy = false; showPanel(id); onPick?.(id); }, 2150));
   };
 
   const release = () => {
+    hidePanel();
     if (picked) picked.liftTarget = 0;
     picked = null;
     busy = false;
@@ -202,6 +233,7 @@ export function createRobotScene(host, { onStart, onPick, onHover }) {
   const resize = () => {
     const w = host.clientWidth, h = host.clientHeight;
     renderer.setSize(w, h);
+    css.setSize(w, h);
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
     const narrow = w / Math.max(1, h) < 0.8;
@@ -236,13 +268,26 @@ export function createRobotScene(host, { onStart, onPick, onHover }) {
       const s = 1 + l.hover * 0.08;
       l.group.scale.set(s, s, s);
     }
+    pv.t += (pv.target - pv.t) * Math.min(1, k * 1.3);
+    if (panel.visible) {
+      const e = pv.t;
+      panel.position.lerpVectors(pv.from, pv.to, e);
+      panel.rotation.set(-Math.PI / 2 + e * (Math.PI / 2 - 0.5), pv.yaw * e, 0.2 * e);
+      const sc = pv.scale * (0.12 + 0.88 * e);
+      panel.scale.set(sc, sc, sc);
+      if (pv.target === 0 && e < 0.02) panel.visible = false;
+    }
     controls.update();
     renderer.render(scene, camera);
+    css.render(scene, camera);
   });
 
   return {
     pick,
     release,
+    showPanel,
+    hidePanel,
+    panel: panelEl,
     dispose() {
       timers.forEach(clearTimeout);
       renderer.setAnimationLoop(null);
@@ -257,6 +302,7 @@ export function createRobotScene(host, { onStart, onPick, onHover }) {
       });
       renderer.dispose();
       el.remove();
+      css.domElement.remove();
     },
   };
 }
