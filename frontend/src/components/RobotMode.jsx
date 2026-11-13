@@ -47,7 +47,7 @@ export default function RobotMode() {
 
   useEffect(() => {
     api.current = createRobotScene(host.current, {
-      onStart: (id) => setBusy(id),
+      onStart: (id) => { setHover(null); setBusy(id); },
       onPick: (id) => { setBusy(null); setOpen(id); },
       onHover: setHover,
     });
@@ -55,7 +55,7 @@ export default function RobotMode() {
   }, []);
 
   const close = () => { setOpen(null); api.current?.release(); };
-  const status = busy ? `fetching ${busy}…` : hover ? `click to fetch ${hover}` : 'click a word on the floor — the arm will fetch it';
+  const status = open ? `viewing ${open}` : busy ? `fetching ${busy}…` : hover ? `click to fetch ${hover}` : 'click a word on the floor — the arm will fetch it';
 
   return (
     <div className="robot" data-testid="robot-mode">

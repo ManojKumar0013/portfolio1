@@ -160,8 +160,9 @@ export function createRobotScene(host, { onStart, onPick, onHover }) {
     const l = labels.find((x) => x.id === id);
     if (!l) return;
     busy = true;
+    hovered = null;
     onStart?.(id);
-    const p = l.group.position;
+    const p = { x: l.pos[0], y: 0.08, z: l.pos[1] };
     target = { ...solveIK(p.x, p.z, p.y + GRIP + 0.55), grip: 0.26 };
     timers.push(setTimeout(() => { target = { ...solveIK(p.x, p.z, p.y + GRIP + 0.05), grip: 0.26 }; }, 900));
     timers.push(setTimeout(() => { target.grip = 0.1; }, 1350));
@@ -206,7 +207,7 @@ export function createRobotScene(host, { onStart, onPick, onHover }) {
     const narrow = w / Math.max(1, h) < 0.8;
     if (narrow !== wasNarrow) {
       wasNarrow = narrow;
-      camera.position.set(narrow ? 2.5 : 6.5, narrow ? 15 : 8.5, narrow ? 17 : 11);
+      camera.position.set(narrow ? 0.3 : 6.5, narrow ? 18 : 8.5, narrow ? 19.5 : 11);
       controls.target.set(0, narrow ? 0.8 : 1.4, 2);
     }
   };

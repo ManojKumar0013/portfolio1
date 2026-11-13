@@ -296,7 +296,7 @@ html.has-cursor, html.has-cursor * { cursor: none !important; }
 .rb-top { position: absolute; top: 0; left: 0; right: 0; display: flex; justify-content: space-between; align-items: center; padding: 1rem var(--pad); pointer-events: none; }
 .rb-top > * { pointer-events: auto; }
 .rb-name { font-size: 1.45rem; display: inline-flex; align-items: center; }
-.robot .icon-btn { border-color: rgba(236, 235, 228, .2); color: #ecebe4; }
+.rb-top .icon-btn { border-color: rgba(236, 235, 228, .2); color: #ecebe4; }
 .rb-options { position: absolute; left: var(--pad); top: 50%; transform: translateY(-50%); display: grid; gap: .5rem; }
 .rb-options > span { color: #8f8d85; margin-bottom: .3rem; }
 .rb-options button { display: inline-flex; align-items: center; gap: .6rem; padding: .6rem .9rem; border: 1px solid rgba(236, 235, 228, .16); border-radius: 99px; color: #ecebe4; background: rgba(29, 29, 27, .6); backdrop-filter: blur(8px); text-align: left; transition: border-color .25s, transform .3s var(--ease-out), opacity .25s; }
@@ -422,7 +422,7 @@ html.has-cursor, html.has-cursor * { cursor: none !important; }
   .rb-options > span { display: none; }
   .rb-options button { font-size: .58rem; padding: .5rem .7rem; }
   .rb-status { top: 4rem; bottom: auto; max-width: none; right: var(--pad); }
-  .rb-window-wrap { padding: 4rem .6rem 4.2rem; }
+  .rb-window-wrap { padding: 4rem .6rem 5.4rem; }
   .rb-body .st-hero { grid-template-columns: 1fr; }
   .skill-grid { grid-template-columns: 1fr; }
   .loader-foot { flex-direction: column-reverse; align-items: flex-start; gap: 1rem; }

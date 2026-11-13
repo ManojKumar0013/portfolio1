@@ -26,12 +26,6 @@ export const FOCUS = [
   { title: 'Core CS Mastery', text: 'My main focus is mastering DSA, Operating Systems, DBMS, and Computer Networks.' },
 ];
 
-export const EDUCATION = [
-  { hash: 'a7f29c1', head: true, years: '2025 — 2029', title: 'B.Tech CSE', place: 'Amrita Vishwa Vidyapeetham, Amritapuri', map: 'https://maps.app.goo.gl/dhpTiDqZXiZ4H5Ms7' },
-  { hash: '3e81b0d', years: '2023 — 2025', title: 'Intermediate', place: 'Narayana Junior College, Visakhapatnam', map: 'https://maps.app.goo.gl/GUaRfTGTZzBHMGYn9' },
-  { hash: '0c4d7e2', years: '2011 — 2023', title: 'Schooling', place: 'Sri Krishna Vidyaa Peet School, Vizianagaram', map: 'https://maps.app.goo.gl/GUme3mj1GoRKW1w79' },
-];
-
 export const SKILLS = [
   { group: 'Web', items: [
     { name: 'HTML', icon: '/icons/html5-original.svg' },

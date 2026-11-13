@@ -23,7 +23,7 @@ export function usePrefsState() {
     localStorage.setItem('mk-music', music ? '1' : '0');
     if (!music) { stopMusic(); return; }
     const go = () => startMusic();
-    go();
+    if (navigator.userActivation?.hasBeenActive) go();
     window.addEventListener('pointerdown', go, { once: true });
     window.addEventListener('keydown', go, { once: true });
     return () => {

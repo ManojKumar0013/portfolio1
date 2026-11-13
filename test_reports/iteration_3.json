@@ -1,0 +1,46 @@
+{
+  "summary": "Frontend-only test of iteration 3 at 1920x1080 and 390x844. All 7 requested changes work. Mode switch (main/robot/static) sets aria-pressed and is saved in mk-mode after reload. Robot mode renders WebGL (three.js lazy chunk); the 4 option buttons and real clicks on the 3D floor words (raycast, found by hover-scanning robot-status) start the fetch ('fetching <id>…'), options are disabled while busy or open, the window opens after ~2.2s with the right content, maximize/restore works, and close or Esc returns the arm. Sound is icon-only (Volume2/VolumeX, aria-pressed, mk-music). The IST clock, hero chip, tagline, Amrita and 'portfolio / 2026' text are removed from the hero, and the hero quote is gone. Education is gone everywhere (5 menu links 01-05, 5 static nav links). Brand buttons are transparent by default, LinkedIn hover is rgb(10,102,194) with white text and GitHub hover is rgb(24,23,23), in all 3 modes. Regression passed: loader, theme, focus text visible, skill drag tile (134px), contact form validation (native required). No email was sent. No console errors (only Chrome AudioContext autoplay warnings).",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "RobotMode mobile 390", "issue": "The canvas crops the scene. 'PROJECTS' is cut at the left edge and the gripper or arm goes past the right edge in the idle pose. Pull the narrow camera back or centre it more (x near 0), or shrink the label spread on narrow screens.", "selector": "[data-testid='robot-canvas']", "priority": "LOW"},
+      {"component": "RobotWindow contact", "issue": "The copy-email button (contact-copy-email-btn, 22x16) is in the DOM but looks invisible or blank in the robot window. On mobile it leaves an empty row under the email. The copy icon seems to have no contrast on the light window background.", "selector": "[data-testid='robot-window-contact'] [data-testid='contact-copy-email-btn']", "priority": "LOW"},
+      {"component": "robot-status", "issue": "After a canvas click, the status shows the old 'click to fetch about' while the window is open, because hovered is not cleared on pick or open. Clear it, or show something like 'viewing <id>' while open.", "selector": "[data-testid='robot-status']", "priority": "LOW"}
+    ],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "Robot window mobile 390", "issues": ["The rb-window bottom (y~776) sits right on top of the fixed mode-switch pill (y 775-832). Send Message is reachable by scrolling, but the pill hides the bottom edge of the window. Consider more bottom padding in .rb-window-wrap on mobile."]}
+    ]
+  },
+  "passed_items": [
+    "mode-main/robot/static-btn: aria-pressed is correct; mk-mode is set and kept after reload (robot reload: no loader, robot-mode rendered)",
+    "robot-canvas has a 1920x1080 canvas with a WebGL context; arm and 4 coloured floor words render",
+    "robot-option-about/skills/projects/contact: status 'fetching <id>…'; all options are disabled while busy and while the window is open; robot-window-<id> opens; About has Focus; Skills has 8 logos loaded; Projects; Contact has the form and brand links",
+    "robot-window-max-btn adds and removes the .max class (1792x928); robot-window-close-btn and Esc both close and the options are enabled again",
+    "Canvas raycast: hover-scan found all 4 words (status 'click to fetch X'); a real mouse click on ABOUT ME started the fetch and opened robot-window-about",
+    "music-toggle-btn has empty text and 1 svg (lucide-volume-2 / lucide-volume-x); aria-pressed toggles; mk-music 0/1; the static and robot variants are icon-only too",
+    "header-ist-clock, hero-status-chip and hero-tagline are absent; no 'portfolio / 2026' text; the quote is gone; #education is absent; the menu has 01 About, 02 Focus, 03 Skills, 04 Projects, 05 Contact; the static nav has 5 links",
+    "Brand links contact-/static-/robot- linkedin and github: rgba(0,0,0,0) by default; hover gives the exact brand colours with white text",
+    "Regression: loader, theme toggle, focus texts opacity 1, skill-chip-python drag class plus tile, contact validation in main and robot, static mode is plain (no canvas), no horizontal overflow at 390"
+  ],
+  "test_report_links": [],
+  "action_items": [
+    "Optional: change the narrow-screen robot camera framing so the words and arm are not cropped at 390",
+    "Optional: make the copy-email icon visible in the robot window (the light rb-window background)",
+    "Optional: clear the hovered state when a pick starts or the window opens, so robot-status is not stale",
+    "Optional: add bottom padding to .rb-window-wrap on mobile so the mode-switch pill doesn't cover the window"
+  ],
+  "critical_code_review_comments": [
+    "data.js still has the Education entry (hash a7f29c1, B.Tech CSE Amrita); it is dead data and can be removed",
+    "App.jsx: the 'lazy, Suspense' import and the RobotMode const sit between imports (import after statement); move them to the top for lint cleanliness",
+    "scene.js pick() reads l.group.position by reference inside setTimeouts, so the IK target includes the hover lift (+0.12) and the lift animation; harmless but slightly off",
+    "StContact reuses non-prefixed testids (contact-copy-email-btn, contact-reveal-phone-btn, contact-submit-btn) in the static and robot views; prefix them for clearer tests",
+    "Music defaults to on, so Chrome logs repeated 'AudioContext was not allowed to start' warnings before any user gesture; consider creating the AudioContext only on the first gesture"
+  ],
+  "updated_files": ["/app/test_reports/iteration_3.json"],
+  "success_rate": {"backend": "not tested (frontend only)", "frontend": "100% of requested features (4 low-priority polish items)"},
+  "seed_data_creation": "None. No contact messages were sent.",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "URL used: https://8cbceb44-8758-43d8-bf90-41ee8696bfe6.preview.emergentagent.com (frontend/.env shows a different mj-portfolio-v2 host). localStorage keys: mk-mode (main|robot|static), mk-music, mk-theme. To click the 3D words, hover-scan the canvas with page.mouse.move and read robot-status ('click to fetch <id>'). At 1920x1080 they were near about(647,549), projects(542,624), skills(997,699), contact(857,749)."
+}

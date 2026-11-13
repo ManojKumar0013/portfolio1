@@ -23,6 +23,12 @@ Replace the imported GitHub flip-book portfolio with a unique, award-level portf
 - Background music: generative ambient pad + bells via Web Audio (audio.js); Sound on/off button in header and static nav (mk-music)
 - LinkedIn (#0a66c2) / GitHub (#181717) brand-coloured buttons
 
+## Iteration 3 (2026-06)
+- 3 view modes, saved in mk-mode: Main / Robot arm / Static (fixed segmented switch)
+- Robot arm mode (three.js, lazy-loaded chunk in robot/scene.js + RobotMode.jsx): 3D arm with IK; 4 floor words About Me / Skills / Projects / Contact (canvas click + HTML buttons); the arm fetches the word, then a window opens with that section
+- Sound is an icon-only toggle; IST clock, hero chip/meta/tagline and the Education section removed
+- LinkedIn/GitHub neutral by default, brand colour on hover
+
 ## Backlog
 - P0: Upload the resume PDF, put it in public/ and set CV_URL
 - P1: 2–3 real projects with screenshots, case-study pages

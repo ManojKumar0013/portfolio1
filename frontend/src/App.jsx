@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import { Prefs, usePrefsState, useReveal } from './hooks';
 import Loader from './components/Loader';
 import Header from './components/Header';
@@ -10,10 +10,10 @@ import Projects from './components/Projects';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
 import Cursor from './components/Cursor';
-import { lazy, Suspense } from 'react';
 import StaticSite from './components/StaticSite';
-const RobotMode = lazy(() => import('./components/RobotMode'));
 import ModeSwitch from './components/ModeSwitch';
+
+const RobotMode = lazy(() => import('./components/RobotMode'));
 
 function Interactive({ ready, setReady }) {
   useReveal(ready);
