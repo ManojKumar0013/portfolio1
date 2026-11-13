@@ -290,7 +290,7 @@ html.has-cursor, html.has-cursor * { cursor: none !important; }
 .music-btn.on .eq i:nth-child(3) { animation-delay: -.6s; }
 .music-btn.on .eq i:nth-child(4) { animation-delay: -.15s; }
 @keyframes eq { 0%, 100% { height: 3px; } 50% { height: 14px; } }
-.mode-switch { position: fixed; right: 1rem; bottom: 1rem; z-index: 70; padding: .75rem 1.1rem; border-radius: 99px; background: var(--fg); color: var(--bg); box-shadow: 0 10px 30px rgba(0, 0, 0, .25); transition: transform .3s var(--ease-out), background-color .25s; }
+.mode-switch { position: fixed; right: 1rem; bottom: 1rem; z-index: 70; padding: .75rem 1.1rem; border-radius: 99px; background: var(--fg); color: var(--bg); box-shadow: 0 10px 30px rgba(0, 0, 0, .25); transition: transform .3s var(--ease-out), background-color .25s, color .25s; }
 .mode-switch:hover { transform: translateY(-2px); background: var(--accent); color: var(--on-accent); }
 
 /* static mode */
@@ -381,6 +381,8 @@ html.has-cursor, html.has-cursor * { cursor: none !important; }
   .music-btn .mono { display: none; }
   .st-hero { grid-template-columns: 1fr; }
   .st-cards { grid-template-columns: 1fr; }
+  .st-nav { position: static; }
+  .site-footer, .st-foot { padding-bottom: 4.5rem; }
   .st-tools .btn { padding: .55rem .8rem; }
   .mode-switch { right: .75rem; bottom: .75rem; font-size: .62rem; }
   .skill-grid { grid-template-columns: 1fr; }

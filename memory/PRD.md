@@ -16,6 +16,13 @@ Replace the imported GitHub flip-book portfolio with a unique, award-level portf
 - Dark/light themes and Calm mode are saved; Calm mode turns on automatically for reduced-motion users
 - Removed the old index.html/script.js/style.css
 
+## Iteration 2 (2026-06)
+- Focus: all 4 descriptions always visible (no accordion)
+- Skills: drag playground on desktop and mobile; touching or dragging a chip turns it into a square tile with a logo (local devicon SVGs in /public/icons); stays inside the playground
+- Static Mode (like marcos-moura97 static.html): fixed "Switch to Static Mode" button that renders a plain document version (StaticSite.jsx); saved in mk-calm and replaces Calm mode
+- Background music: generative ambient pad + bells via Web Audio (audio.js); Sound on/off button in header and static nav (mk-music)
+- LinkedIn (#0a66c2) / GitHub (#181717) brand-coloured buttons
+
 ## Backlog
 - P0: Upload the resume PDF, put it in public/ and set CV_URL
 - P1: 2–3 real projects with screenshots, case-study pages

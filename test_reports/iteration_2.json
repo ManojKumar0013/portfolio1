@@ -1,0 +1,46 @@
+{
+  "summary": "Frontend-only test of iteration 2 at 1920x1080 and 390x844, including a real touch context using CDP touch events. All 6 requested features work. Focus: all 4 descriptions are always visible. Skills: mouse and real touch drag turn the chip into a 132px tile with a 56px logo, the class is removed on release, the chip moves, and the page does not scroll during a touch drag. Music toggle works and is saved. Static Mode switch works and is saved. Brand colours are exact in both modes. Contact copy, phone reveal and form work in both modes; exactly 1 real email was sent from static mode and its DB row was deleted. Regression checks passed: loader, menu, theme, project links, back-to-top, and no overflow at 390 in either mode. No console or page errors. Only minor polish items were found.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "Skills Chip", "issue": "Chips are not limited to the playground. The playground has overflow:hidden, so a chip dragged past the edge is clipped or lost; at 1920, Python dragged down was half cut off at the bottom. Suggest limiting the translate to the playground bounds.", "selector": "[data-testid^='skill-chip-']", "priority": "LOW"},
+      {"component": "Skills Chip", "issue": "down() calls setPointerCapture before classList.add('drag'). If setPointerCapture throws (seen with synthetic events), the chip never gets the tile style. Suggest wrapping it in try/catch or adding the class first. Real mouse and touch input works.", "selector": "[data-testid='skill-chip-python']", "priority": "LOW"},
+      {"component": "ModeSwitch", "issue": "On hover, background-color has a .25s transition but color switches instantly to --on-accent (#121211). For about 250ms the dark text sits on the still-dark background, so the pill looks blank right after a click. Add color to the transition, or change both at once.", "selector": "[data-testid='mode-switch-btn']", "priority": "LOW"}
+    ],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "Static mode, mobile 390", "issues": ["The sticky st-nav takes about 185px of the 844px viewport (logo, 2 rows of links, tools row). Make it non-sticky on mobile or make it smaller."]},
+      {"screen": "Both modes", "issues": ["The fixed mode-switch pill (bottom-right) covers content as you scroll, for example the Send button area at 390. Acceptable, but consider some bottom padding on the last section or footer.", "In dark theme the GitHub button (#181717) is almost the same colour as the page background (#121211); only the thin border separates it. This is the brand colour as requested, so it is just a note."]}
+    ]
+  },
+  "passed_items": [
+    "focus-row-0..3 .focus-text visible (opacity 1, height >0) without clicking at 1920 and 390",
+    "skills-playground is visible at 1920 and 390 with 8 chips; on mouse down the chip gets class 'drag', the logo is 56x56 and the chip is 132x132 (all 8 chips; long names like JavaScript fit inside); the class is removed on release; the chip moved about (198,72)",
+    "Real touch (has_touch context with CDP touchStart/Move/End) at 390: drag class, 56px logo, 132px tile; it moved (99,-122) with page scroll 0; tap-and-hold also shows the tile",
+    "music-toggle-btn: aria-pressed=true and 'Sound on' by default; click gives false/'Sound off'; mk-music=0 is kept after reload; the music button is visible on mobile (label hidden by CSS, aria-label present)",
+    "mode-switch-btn is fixed bottom-right and reads 'Switch to Static Mode'; clicking renders static-site with static-nav-about..contact linked to st-* sections that exist; all 10 static images load (photo, 8 skill logos, project image); the button reads 'Switch to Interactive Mode'; mk-calm=1 and data-calm=on are kept after reload with no loader",
+    "Switching back gives an interactive site with no loader; mk-calm=0; all 25 .rv elements get .in after scrolling",
+    "static-theme-toggle-btn switches data-theme; static-music-toggle-btn toggles aria-pressed and mk-music",
+    "contact-linkedin-link and static-linkedin-link: rgb(10,102,194) with white text; contact-github-link and static-github-link: rgb(24,23,23) with white text; URLs are correct",
+    "Copy email shows 'copied', and phone reveal shows +91 63035 92919, in both modes; the contact form in static mode showed contact-success (1 real email)",
+    "Regression: theme-toggle-btn, menu-toggle-btn then menu-link-projects scrolls to #projects; project live, source and more-GitHub links are correct; footer-back-to-top click scrolls to top (scrollY 1) on desktop; no horizontal overflow at 390 in either mode; first-visit loader removed in about 3.0s"
+  ],
+  "test_report_links": [],
+  "action_items": [
+    "Optional: limit skill chip dragging to the playground bounds",
+    "Optional: in Skills Chip down(), add the 'drag' class before setPointerCapture, and wrap the capture in try/catch",
+    "Optional: add color to the .mode-switch transition so the pill doesn't look blank on hover or click",
+    "Optional: make the static nav smaller or non-sticky on mobile"
+  ],
+  "critical_code_review_comments": [
+    "Skills.jsx: the drag position st.current is not reset when the layout changes (useMedia small/large), so after a resize the chips keep their old translate on top of the new spot",
+    "styles.css: '.chip-drag:not(.drag) .logo {display:none}' stops the width/height transition on the logo, so it pops in. Use visibility/opacity instead if the animation is wanted",
+    "StaticSite.jsx lists only 'live' projects; the 3 coming-soon cards from interactive mode are left out. Fine if intended"
+  ],
+  "updated_files": ["/app/test_reports/iteration_2.json"],
+  "success_rate": {"backend": "not tested (frontend only)", "frontend": "100% of requested features (3 low-priority polish items)"},
+  "seed_data_creation": "One real contact message (TEST_ Tester iter2 / test.iter2@example.com) was sent from static mode; its db.messages row was deleted by exact name and email. The owner's inbox got 1 test email this iteration.",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Public URL: the REACT_APP_BACKEND_URL in frontend/.env (mj-portfolio-v2--8pqz920c...). Synthetic PointerEvents fail because setPointerCapture needs an active pointer; use page.mouse, or a has_touch context plus CDP Input.dispatchTouchEvent. localStorage keys: mk-calm, mk-music, mk-theme."
+}

@@ -14,13 +14,18 @@ function Chip({ name, icon, group, spot }) {
   const down = (e) => {
     const s = st.current;
     s.sx = e.clientX - s.x; s.sy = e.clientY - s.y;
-    ref.current.setPointerCapture(e.pointerId);
-    ref.current.classList.add('drag');
+    const el = ref.current;
+    el.classList.add('drag');
+    const box = el.parentElement.getBoundingClientRect(), r = el.getBoundingClientRect();
+    s.minX = s.x - (r.left - box.left) + 8; s.maxX = s.x + (box.right - r.right) - 8;
+    s.minY = s.y - (r.top - box.top) + 8; s.maxY = s.y + (box.bottom - r.bottom) - 8;
+    try { el.setPointerCapture(e.pointerId); } catch { /* synthetic event */ }
   };
   const move = (e) => {
-    if (!ref.current.hasPointerCapture(e.pointerId)) return;
+    if (!ref.current.classList.contains('drag')) return;
     const s = st.current;
-    s.x = e.clientX - s.sx; s.y = e.clientY - s.sy;
+    const clamp = (v, a, b) => Math.min(Math.max(v, a), b);
+    s.x = clamp(e.clientX - s.sx, s.minX, s.maxX); s.y = clamp(e.clientY - s.sy, s.minY, s.maxY);
     ref.current.style.transform = `translate(${s.x}px, ${s.y}px) rotate(${s.x * 0.02}deg)`;
   };
   const up = () => ref.current.classList.remove('drag');
@@ -45,7 +50,7 @@ export default function Skills() {
       <SectionHead idx="04" path="ls /usr/bin/skills" title="Skills" id="skills" />
       <div className="playground" data-testid="skills-playground">
         <span className="mono hint">touch & drag a skill ↘</span>
-        {flat.map((s, i) => <Chip key={s.name} {...s} spot={spots[i]} />)}
+        {flat.map((s, i) => <Chip key={`${s.name}-${small}`} {...s} spot={spots[i]} />)}
         <ul className="sr-only">{flat.map((s) => <li key={s.name}>{s.group}: {s.name}</li>)}</ul>
       </div>
     </section>
