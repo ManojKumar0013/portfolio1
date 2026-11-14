@@ -4,24 +4,32 @@ import { Github, Linkedin } from './BrandIcons';
 import SectionHead from './SectionHead';
 import { PROFILE } from '../data';
 
-const API = '/api';
+// A separate frontend can use the Render API; the hosted Site uses its own Worker.
+const BACKEND_URL = import.meta.env.REACT_APP_BACKEND_URL?.trim();
+const API = BACKEND_URL ? `${BACKEND_URL.replace(/\/$/, '')}/api` : '/api';
+const STATUS_URL = BACKEND_URL ? `${API}/` : `${API}/contact/status`;
 
 export function ContactForm() {
   const born = useRef(Date.now());
   const [f, setF] = useState({ name: '', email: '', message: '', website: '' });
   const [state, setState] = useState('idle');
   const [err, setErr] = useState('');
-  const [mailReady, setMailReady] = useState(false);
+  const [mailReady, setMailReady] = useState(null);
   const set = (k) => (e) => setF({ ...f, [k]: e.target.value });
 
   useEffect(() => {
-    fetch(`${API}/contact/status`).then((r) => r.ok ? r.json() : null)
-      .then((data) => setMailReady(data?.ready === true)).catch(() => setMailReady(false));
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), 30000);
+    fetch(STATUS_URL, { signal: controller.signal }).then((r) => r.ok ? r.json() : null)
+      .then((data) => setMailReady(BACKEND_URL ? data?.status === 'ok' : data?.ready === true))
+      .catch(() => setMailReady(false))
+      .finally(() => window.clearTimeout(timeout));
+    return () => { controller.abort(); window.clearTimeout(timeout); };
   }, []);
 
   const submit = async (e) => {
     e.preventDefault();
-    if (!mailReady) {
+    if (mailReady === false) {
       const subject = encodeURIComponent(`Portfolio message from ${f.name}`);
       const body = encodeURIComponent(`${f.message}\n\nFrom: ${f.name} (${f.email})`);
       window.location.href = `mailto:${PROFILE.email}?subject=${subject}&body=${body}`;
@@ -77,10 +85,10 @@ export function ContactForm() {
         <input tabIndex={-1} autoComplete="off" value={f.website} onChange={set('website')} />
       </label>
       {state === 'error' && <p className="form-err" role="alert" data-testid="contact-error">{err}</p>}
-      <button type="submit" className="btn solid send" disabled={state === 'sending'} data-testid="contact-submit-btn">
-        {state === 'sending' ? 'Sending…' : mailReady ? 'Send message' : 'Open email draft'} <ArrowRight size={16} />
+      <button type="submit" className="btn solid send" disabled={state === 'sending' || mailReady === null} data-testid="contact-submit-btn">
+        {state === 'sending' ? 'Sending…' : mailReady === null ? 'Connecting to mail…' : mailReady ? 'Send message' : 'Open email draft'} <ArrowRight size={16} />
       </button>
-      {!mailReady && <p className="mono">Your email app opens to send this message.</p>}
+      {mailReady === false && <p className="mono">Your email app opens to send this message.</p>}
     </form>
   );
 }
