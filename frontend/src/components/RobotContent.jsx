@@ -4,7 +4,7 @@ import { CvButton } from './Header';
 import { Github, Linkedin } from './BrandIcons';
 import { ContactForm, EmailRow, PhoneRow } from './Contact';
 
-const FOCUS_ICONS = [Shield, Brain, Code2, Cpu];
+const FOCUS_ICONS = [Code2, Brain, Shield, Cpu];
 const CORE = ['Data Structures & Algorithms', 'Operating Systems', 'DBMS', 'Computer Networks'];
 const FACTS = [
   [GraduationCap, 'Degree', 'B.Tech Computer Science & Engineering'],
@@ -48,7 +48,7 @@ export function RcAbout() {
       <div className="rc-focus">
         {FOCUS.map((f, i) => {
           const I = FOCUS_ICONS[i];
-          return <div key={f.title} className="rc-card"><I size={20} aria-hidden="true" /><h5>{f.title}</h5><p>{f.text}</p></div>;
+          return <div key={f.title} className="rc-card"><I size={20} aria-hidden="true" /><h5>{f.title}</h5><p>{f.text}</p><ul className="focus-tags mono">{f.tags.map((tag) => <li key={tag}>{tag}</li>)}</ul></div>;
         })}
       </div>
       <div className="rc-cta"><CvButton testid="rc-cv-btn" /><Socials prefix="rc-about" /></div>
@@ -82,7 +82,6 @@ export function RcSkills() {
 
 export function RcProjects() {
   const live = PROJECTS.filter((p) => p.status === 'live');
-  const soon = PROJECTS.length - live.length;
   return (
     <div className="rc" data-testid="rc-projects">
       <Head title="Projects" sub="ps aux ~/projects" />
@@ -103,11 +102,6 @@ export function RcProjects() {
           </div>
         </article>
       ))}
-      <div className="rc-soon">
-        {Array.from({ length: soon }, (_, i) => (
-          <div key={i} className="rc-soon-card"><span className="mono">PID 00{i + 2} · queued</span><strong>Coming soon</strong></div>
-        ))}
-      </div>
       <a href={PROFILE.github} target="_blank" rel="noopener noreferrer" className="st-more" data-testid="rc-more-github-link">More on GitHub <ArrowUpRight size={16} /></a>
     </div>
   );

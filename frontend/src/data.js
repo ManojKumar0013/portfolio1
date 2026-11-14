@@ -20,10 +20,10 @@ export const NAV = [
 ];
 
 export const FOCUS = [
-  { title: 'Cybersecurity', text: 'I am passionate about learning system vulnerabilities, ethical hacking, and building secure applications.' },
-  { title: 'Artificial Intelligence', text: 'I explore machine learning concepts and how intelligent systems analyze data to solve real-world problems.' },
-  { title: 'Software Development', text: 'I work with technologies like Python, C, JavaScript, HTML, CSS and build real-world projects to strengthen my development skills.' },
-  { title: 'Core CS Mastery', text: 'My main focus is mastering DSA, Operating Systems, DBMS, and Computer Networks.' },
+  { title: 'Full-stack systems', kicker: 'BUILD / 01', text: 'I connect expressive interfaces to APIs and relational data. HungryHub is where I put that end-to-end thinking into practice.', tags: ['React', 'Express', 'PostgreSQL'] },
+  { title: 'AI & interaction', kicker: 'EXPLORE / 02', text: 'I am learning how intelligent systems make useful decisions, while experimenting with experiences that respond to people and their moods.', tags: ['Machine learning', 'NexTune', 'UX'] },
+  { title: 'Security mindset', kicker: 'PROTECT / 03', text: 'I study vulnerabilities and ethical hacking so that security is part of how I design and build software.', tags: ['Secure design', 'Ethical hacking'] },
+  { title: 'Computer science', kicker: 'LEARN / 04', text: 'I am strengthening the fundamentals behind reliable software: algorithms, operating systems, databases and computer networks.', tags: ['DSA', 'OS', 'DBMS', 'Networks'] },
 ];
 
 export const SKILLS = [
@@ -68,7 +68,20 @@ export const PROJECTS = [
     live: 'https://manojkumar0013.github.io/Circle-Accuracy-Challenge/',
     source: 'https://github.com/ManojKumar0013/Circle-Accuracy-Challenge',
   },
-  { id: 'slot-02', status: 'soon' },
-  { id: 'slot-03', status: 'soon' },
-  { id: 'slot-04', status: 'soon' },
+  {
+    id: 'hungryhub', status: 'live', title: 'HungryHub',
+    blurb: 'A full-stack food ordering system connecting customers, restaurants, staff and delivery partners through a PostgreSQL-backed API.',
+    image: '/project-hungryhub.svg',
+    tags: ['React', 'TypeScript', 'Express', 'PostgreSQL', 'Neon'],
+    live: 'https://hungry-hub-online-food-ordering-sys.vercel.app/',
+    source: 'https://github.com/ManojKumar0013/HungryHub-Online-Food-Ordering-System-',
+  },
+  {
+    id: 'nextune', status: 'live', title: 'NexTune',
+    blurb: 'An emotion-based music experience with mood-driven discovery, playlists, a player and ambient visual effects.',
+    image: '/project-nextune.svg',
+    tags: ['HTML', 'CSS', 'JavaScript', 'Vue', 'Jamendo API'],
+    live: 'https://manojkumar0013.github.io/EMOTION_BASED_MUSIC_WEBSITE/',
+    source: 'https://github.com/ManojKumar0013/EMOTION_BASED_MUSIC_WEBSITE',
+  },
 ];

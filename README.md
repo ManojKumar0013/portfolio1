@@ -1,126 +1,29 @@
-#  Manoj Kumar — 3D Portfolio Book
+# Manoj Kumar — Portfolio
 
-A modern **3D interactive portfolio website** built using **HTML, CSS, and JavaScript**.
-Designed as a **realistic flipping book UI**, this portfolio showcases profile, skills, education, projects, and contact information with smooth animations and focus effects.
+An interactive portfolio with a main mode and a robotic arm mode. Built with React, Vite and Three.js, with a server route for the contact form on the hosted Site.
 
----
+## Live site
 
-##  Live Website
+[View the portfolio](https://manoj-kumar-portfolio-2026.mintyazalea4.chatgpt.site)
 
- https://manojkumar0013.github.io/portfolio/
+The current Site is private and asks visitors to sign in with ChatGPT. Sharing settings are managed separately from this repository.
 
----
+## Highlights
 
-## Features
+- Animated intro and robotic arm experience with a quick switch to the main portfolio.
+- About, Interests & Focus, interactive skills, projects and contact sections.
+- Skills return to a neutral hat display when an icon is no longer active; dark and light themes have legible logos.
+- Projects include HungryHub and NexTune, with live and source links.
+- Contact form sends through `/api/contact` when the hosted runtime has an Emergent Email integration key; otherwise it opens an email draft.
 
-*  **3D Book Layout** — Realistic page flipping animation
-*  **Quick Navigation Buttons** — Jump directly to sections (About, Focus, Education, Skills)
-*  **Focus Blur Effect** — Active page stays clear, others blur
-*  **Dark / Light Mode Toggle**
-*  **Modern UI Design** with smooth transitions
-*  **Responsive Layout** (works on different screen sizes)
-*  **Project Showcase Section** with live preview & source links
-*  **Contact Form + Social Links**
+## Run locally
 
----
-
-##  Project Structure
-
-```
-portfolio/
-│
-├── index.html          # Main 3D book portfolio (single-page system)
-├── style.css           # Complete styling (UI + layout + animations)
-├── script.js           # All logic (page flip, blur, navigation)
-│
-├── assets/
-│   ├── photo.jpg       # Profile image
-│   ├── image.png       # Project preview image
-│   └── Resume.pdf      # Download CV
-│
-└── README.md
+```bash
+cd frontend
+npm ci
+npm run dev
 ```
 
----
+Run `npm run build` to create the Vite assets and Cloudflare Worker in `frontend/dist`. The Site manifest is `frontend/.openai/hosting.json`. The source for the contact endpoint is `frontend/worker/index.js`.
 
-##  Sections Included
-
-| Section           | Description                       |
-| ----------------- | --------------------------------- |
-| Profile           | Intro, photo, social links        |
-| About Me          | Personal background & goals       |
-| Interests & Focus | Cybersecurity, AI, Development    |
-| Education         | Academic timeline                 |
-| Skills            | Tech stack (Frontend + Languages) |
-| Projects          | Featured project with tech tags   |
-| Contact           | Email, phone, and contact form    |
-
----
-
-##  Technologies Used
-
-* **HTML5** — Structure
-* **CSS3** — Styling, animations, 3D transforms
-* **JavaScript (Vanilla)** — Interactions & logic
-* **Boxicons** — Icons
-* **Devicon** — Tech icons
-
----
-
-##  Special UI Concepts
-
-###  Page Flip System
-
-* Each section is designed as a **book page**
-* Uses `transform: rotateY()` for realistic flipping
-
-###  Focus Blur Effect
-
-* When navigating:
-
-  * Selected page → **Clear**
-  * Other pages → **Blurred**
-* Reset using:
-
-  * Arrow navigation
-  * Double click
-
-###  Quick Navigation
-
-Buttons:
-
-* About
-* Focus
-* Education
-* Skills
-
-Instantly jumps to correct page with proper stacking.
-
----
-
-##  How to Run
-
-No installation needed.
-
-1. Download or clone repository
-2. Open folder
-3. Double-click:
-
-```
-index.html
-```
-
----
-
-##  Deployment (GitHub Pages)
-
-1. Push code to GitHub
-2. Go to **Settings → Pages**
-3. Select branch: `main`
-4. Save
-
-Your site will be live 
-
-
-
-
+Set `EMERGENT_EMAIL_KEY` as a **secret** in the Site's production runtime environment to enable direct contact messages. Do not put the key in source, a local `.env` committed to Git, or a frontend variable. The original FastAPI backend under `backend/` is retained for the separate Emergent deployment.

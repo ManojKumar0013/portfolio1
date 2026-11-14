@@ -1,20 +1,33 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Copy, Check, Phone, ArrowRight } from 'lucide-react';
 import { Github, Linkedin } from './BrandIcons';
 import SectionHead from './SectionHead';
 import { PROFILE } from '../data';
 
-const API = `${import.meta.env.REACT_APP_BACKEND_URL}/api`;
+const API = '/api';
 
 export function ContactForm() {
   const born = useRef(Date.now());
   const [f, setF] = useState({ name: '', email: '', message: '', website: '' });
   const [state, setState] = useState('idle');
   const [err, setErr] = useState('');
+  const [mailReady, setMailReady] = useState(false);
   const set = (k) => (e) => setF({ ...f, [k]: e.target.value });
+
+  useEffect(() => {
+    fetch(`${API}/contact/status`).then((r) => r.ok ? r.json() : null)
+      .then((data) => setMailReady(data?.ready === true)).catch(() => setMailReady(false));
+  }, []);
 
   const submit = async (e) => {
     e.preventDefault();
+    if (!mailReady) {
+      const subject = encodeURIComponent(`Portfolio message from ${f.name}`);
+      const body = encodeURIComponent(`${f.message}\n\nFrom: ${f.name} (${f.email})`);
+      window.location.href = `mailto:${PROFILE.email}?subject=${subject}&body=${body}`;
+      setState('draft');
+      return;
+    }
     setState('sending'); setErr('');
     try {
       const r = await fetch(`${API}/contact`, {
@@ -45,6 +58,10 @@ export function ContactForm() {
     );
   }
 
+  if (state === 'draft') {
+    return <div className="form-sent" role="status"><span className="mono">Email draft</span><p className="display">Ready to send.</p><p>Your email app should open with your message. Send it there to reach me.</p><button className="btn" onClick={() => setState('idle')}>Back to form</button></div>;
+  }
+
   return (
     <form className="contact-form" onSubmit={submit} data-testid="contact-form" noValidate={false}>
       <label><span className="mono">name</span>
@@ -61,8 +78,9 @@ export function ContactForm() {
       </label>
       {state === 'error' && <p className="form-err" role="alert" data-testid="contact-error">{err}</p>}
       <button type="submit" className="btn solid send" disabled={state === 'sending'} data-testid="contact-submit-btn">
-        {state === 'sending' ? 'Sending…' : 'Send message'} <ArrowRight size={16} />
+        {state === 'sending' ? 'Sending…' : mailReady ? 'Send message' : 'Open email draft'} <ArrowRight size={16} />
       </button>
+      {!mailReady && <p className="mono">Your email app opens to send this message.</p>}
     </form>
   );
 }

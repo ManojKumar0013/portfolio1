@@ -37,7 +37,7 @@ function RobotWindow({ id, flat, onFlat, onClose }) {
   );
 }
 
-export default function RobotMode() {
+export default function RobotMode({ onReady }) {
   const host = useRef(null);
   const api = useRef(null);
   const [open, setOpen] = useState(null);
@@ -45,17 +45,18 @@ export default function RobotMode() {
   const [hover, setHover] = useState(null);
   const [flat, setFlat] = useState(false);
   const [panel, setPanel] = useState(null);
-  const { theme, toggleTheme } = usePrefs();
+  const { theme, toggleTheme, setMode } = usePrefs();
   useEffect(() => { api.current?.setTheme(theme); }, [theme, panel]);
 
   useEffect(() => {
-    api.current = createRobotScene(host.current, {
+    try { api.current = createRobotScene(host.current, {
       onStart: (id) => { setHover(null); setOpen(null); setFlat(false); setBusy(id); },
       onPick: (id) => { setBusy(null); setOpen(id); },
       onHover: setHover,
-    });
+      onFirstFrame: () => onReady?.(),
+    }); } catch (error) { console.error('Robot scene could not initialize', error); setMode('main'); return; }
     setPanel(api.current.panel);
-    return () => api.current.dispose();
+    return () => api.current?.dispose();
   }, []);
 
   const close = () => { setOpen(null); setFlat(false); api.current?.release(); };

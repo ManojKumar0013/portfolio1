@@ -9,7 +9,7 @@ export const ROBOT_LABELS = [
   { id: 'about', text: 'ABOUT ME', color: '#4de8ff', light: '#0891b2', pos: [-1.9, 2.7] },
   { id: 'skills', text: 'SKILLS', color: '#ff5ec8', light: '#c0268a', pos: [1.9, 2.7] },
   { id: 'projects', text: 'PROJECTS', color: '#ffe14d', light: '#b88900', pos: [-1.9, 4.4] },
-  { id: 'contact', text: 'CONTACT', color: '#ff7a3d', light: '#d9480f', pos: [1.9, 4.4] },
+  { id: 'contact', text: 'CONTACT', color: '#7b9eff', light: '#5065bc', pos: [1.9, 4.4] },
 ];
 
 const THEMES = {
@@ -103,9 +103,9 @@ function buildLabels(scene) {
   });
 }
 
-export function createRobotScene(host, { onStart, onPick, onHover }) {
+export function createRobotScene(host, { onStart, onPick, onHover, onFirstFrame }) {
   const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
-  renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 1.75));
+  renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 1.5));
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   host.appendChild(renderer.domElement);
@@ -161,8 +161,8 @@ export function createRobotScene(host, { onStart, onPick, onHover }) {
   const mats = {
     white: new THREE.MeshStandardMaterial({ color: '#ecebe6', roughness: 0.32, metalness: 0.25 }),
     dark: new THREE.MeshStandardMaterial({ color: '#2b2b29', roughness: 0.5, metalness: 0.6 }),
-    accent: new THREE.MeshStandardMaterial({ color: '#ff5b1f', emissive: '#ff5b1f', emissiveIntensity: 0.4 }),
-    glow: new THREE.MeshBasicMaterial({ color: '#ff5b1f' }),
+    accent: new THREE.MeshStandardMaterial({ color: '#8575f7', emissive: '#8575f7', emissiveIntensity: 0.4 }),
+    glow: new THREE.MeshBasicMaterial({ color: '#8575f7' }),
   };
   const arm = buildArm(mats);
   scene.add(arm.root);
@@ -269,6 +269,7 @@ export function createRobotScene(host, { onStart, onPick, onHover }) {
   resize();
 
   const clock = new THREE.Clock();
+  let firstFrame = true;
   renderer.setAnimationLoop(() => {
     const dt = Math.min(clock.getDelta(), 0.05);
     const t = clock.elapsedTime;
@@ -301,6 +302,7 @@ export function createRobotScene(host, { onStart, onPick, onHover }) {
     controls.update();
     renderer.render(scene, camera);
     css.render(scene, camera);
+    if (firstFrame) { firstFrame = false; onFirstFrame?.(); }
   });
 
   return {
